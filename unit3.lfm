@@ -1,0 +1,20 @@
+object FrmSerialMonitor: TFrmSerialMonitor
+  Left = 449
+  Height = 1042
+  Top = 153
+  Width = 959
+  Caption = 'Serial Monitor'
+  ClientHeight = 1042
+  ClientWidth = 959
+  LCLVersion = '1.6.0.4'
+  object Memo1: TMemo
+    Left = 0
+    Height = 1042
+    Top = 0
+    Width = 959
+    Align = alClient
+    OnChange = Memo1Change
+    ScrollBars = ssVertical
+    TabOrder = 0
+  end
+end
