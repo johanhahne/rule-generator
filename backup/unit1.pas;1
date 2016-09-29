@@ -6,19 +6,30 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  StdCtrls, Menus, ExtCtrls, SdpoSerial,contnrs,Unit2,Unit3, db;
+  StdCtrls, Menus, ExtCtrls, SdpoSerial,contnrs, simpleipc,Unit2,Unit3, db;
 
 type
-  TruleRec = record
-    guid,rulegroup,rulename,inpbus,inpmodule,inpport,inpstate,outpbus,outpport,outpmodule,outpstate,hrstart,minstart,hrend,minend,lpressec:string;
 
+
+    TmapRec = record
+    name:string;
+    bus,module,port,state:string;
   end;
+
+  TruleRec = record
+    guid,rulegroup,rulename,inpbus,inpmodule,inpport,inpstate,outpbus,outpport,outpmodule,outpstate,hrstart,minstart,hrend,minend,lpressec,mapbuttonname,mapfunctionname,mapbuttonstate,mapfuctionstate:string;
+  end;
+  rulerecpointer = ^Trulerec;
+
 
   Tdescr = class(Tobject)
     desc:string;
   end;
 
   Trulelist = array of TruleRec;
+  Tmaplist = array of TmapRec;
+
+
 
   { TForm1 }
 
@@ -29,16 +40,22 @@ type
     Button3: TButton;
     Button4: TButton;
     Button5: TButton;
+    Button6: TButton;
     Combo_frmhr: TComboBox;
     Combo_frmmin: TComboBox;
+    combo_inpbus1: TComboBox;
+    combo_inpport1: TComboBox;
+    combo_inpstate1: TComboBox;
+    Combo_longpress_sec1: TComboBox;
     combo_outpmodule: TComboBox;
     combo_outpport: TComboBox;
     combo_outpstate: TComboBox;
     Combo_longpress_sec: TComboBox;
-    combo_inpbus: TComboBox;
-    combo_inpport: TComboBox;
+    combo_inpbutton: TComboBox;
     combo_inpstate: TComboBox;
+    combo_outpstate1: TComboBox;
     Combo_outputbus: TComboBox;
+    Combo_function_Name: TComboBox;
     combo_rulename: TComboBox;
     combo_rulegroup: TComboBox;
     Combo_tohr: TComboBox;
@@ -47,7 +64,12 @@ type
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
-    Label2: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -57,6 +79,7 @@ type
     Label9: TLabel;
     MainMenu1: TMainMenu;
     MainMenu2: TMainMenu;
+    MainMenu3: TMainMenu;
     Memo1: TMemo;
     Memo2: TMemo;
     MenuItem1: TMenuItem;
@@ -75,6 +98,7 @@ type
     Panel3: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
+    Panel6: TPanel;
     SaveDialog1: TSaveDialog;
     SaveDialog2: TSaveDialog;
     SdpoSerial1: TSdpoSerial;
@@ -86,8 +110,8 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
-    procedure combo_inpstateChange(Sender: TObject);
-    procedure Combo_longpress_secChange(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+    procedure compChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure loadfile;
     procedure MenuItem11Click(Sender: TObject);
@@ -105,11 +129,25 @@ type
     procedure TreeView1Click(Sender: TObject);
     procedure PopulateDataFields;
     procedure SaveRules(SaveAs:boolean);
-    procedure WriteToArray(var Avalue:TruleRec);
+    procedure TreeView1DragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+    procedure WriteToArray(var Avalue:TruleRec;guid:string);
     procedure GenArduinoRules(var A: Tstringlist);
     procedure SendSerialData(Header,data:string);
   private
+    procedure addRuleToTreeview(var rulerec: TruleRec; treeview: TTreeView);
+    function ComposeRule(rrec: TruleRec): string;
     procedure DeleteFromrules(var A: Trulelist; const Index: Cardinal);
+    procedure fillCombo(combo:TComboBox;list:Tmaplist);
+    procedure fillTimeCombo;
+    function getNameFromMaplist(bus,module, port: string; list: Tmaplist): string;
+    function getTreenode(nodename: string;treeview:ttreeview): ttreenode;
+
+    function getValFromMaplist(Mapname, valToGet: string; list: Tmaplist): string;
+
+    procedure loadMapFile(filename: string; maplist: Tmaplist);
+    procedure resetChangedColors;
+    procedure loadfuncMapfile(filename,listtype:string;var  list:Tmaplist);
     { private declarations }
   public
     { public declarations }
@@ -118,7 +156,12 @@ type
 
   rulelist : Trulelist;
   nodedescr:Tdescr;
-  lastgroup,lastrule,serialbuff:string;
+  current_rule,lastgroup,lastrule,serialbuff:string;
+   buttonmaplist,buttonStateMaplist: Tmaplist;
+   functionmaplist,functionStateMaplist: Tmaplist;
+   changed_controls: TObjectList;
+   loadingdata:boolean;
+   prulerec:rulerecpointer;
   end;
 
 var
@@ -167,8 +210,6 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 begin
   SaveRules(true);
-  lastgroup:=combo_rulegroup.text;
-  lastrule:=combo_rulename.text;
 refreshdata;
 SaveFile(false);
 end;
@@ -176,11 +217,16 @@ end;
 procedure TForm1.Button3Click(Sender: TObject);
 begin
   try
+  if TreeView1.Selected =nil then
+   SaveRules(true)
+   else
    SaveRules(false);
-   lastgroup:=combo_rulegroup.text;
-   lastrule:=combo_rulename.text;
- refreshdata;
- SaveFile(false);
+ //  lastgroup:=combo_rulegroup.text;
+ //  lastrule:=combo_rulename.text;
+ //refreshdata;
+ //SaveFile(false);
+
+ resetChangedColors
 finally
 end;
 
@@ -197,7 +243,6 @@ begin
        idx:=i;
        break;
    end;
-
  end;
    DeleteFromrules(rulelist,idx);
    refreshdata;
@@ -208,15 +253,82 @@ begin
     SdpoSerial1.WriteData('!5#'+#10);
 end;
 
-procedure TForm1.combo_inpstateChange(Sender: TObject);
+procedure TForm1.Button6Click(Sender: TObject);
+begin
+     SaveRules(true);
+ //  lastgroup:=combo_rulegroup.text;
+ //  lastrule:=combo_rulename.text;
+ //refreshdata;
+ //SaveFile(false);
+
+ resetChangedColors
+end;
+
+procedure TForm1.compChange(Sender: TObject);
 begin
 
+   if loadingdata=false then
+   begin
+   if TWinControl(sender).Color <> clRed then
+   changed_controls.Add(sender);
+   TWinControl(sender).Color := clRed;
 
+   end;
+end;
+procedure TForm1.resetChangedColors;
+var
+  i,j:integer;
+begin
+     for i := changed_controls.Count-1 downto 0 do
+     begin
+        TWinControl(changed_controls[i]).Color := clAppWorkspace;
+        changed_controls.Delete(i);
+     end;
 
 end;
 
-procedure TForm1.Combo_longpress_secChange(Sender: TObject);
+procedure TForm1.loadfuncMapfile(filename, listtype: string; var  list: Tmaplist);
+var
+i:integer;
+filestrings,rulestrings:tstringlist;
+ g:TGuid;
 begin
+ filestrings:=TStringList.Create;
+ filestrings.LoadFromFile(filename);
+
+  SetLength(list,filestrings.Count);
+   try
+  for i := 0 to filestrings.Count-1 do
+  begin
+    if trim(filestrings[i])<>'' then
+    begin
+
+    rulestrings:=TStringList.Create;
+    rulestrings.Delimiter:=',';
+    rulestrings.StrictDelimiter:=true;
+    rulestrings.DelimitedText:=filestrings[i];
+    list[i].name:=rulestrings[0];
+    if listtype='state' then
+    begin
+    list[i].state:=rulestrings[1];
+    end;
+
+    if (listtype='functions') or (listtype='buttons') then
+    begin
+     list[i].bus:=rulestrings[1];
+     list[i].module:=rulestrings[2];
+     list[i].port:=rulestrings[3];
+
+    end;
+
+    end;
+  end;
+      FreeAndNil(filestrings);
+   except
+       FreeAndNil(filestrings);
+       ShowMessage('Error reading rule file');
+   end;
+
 
 end;
 
@@ -224,9 +336,37 @@ procedure TForm1.FormCreate(Sender: TObject);
 var
   i:integer;
 begin
- for i := 0 to 63 do
+    changed_controls:=TObjectList.create(False);
+          loadfuncMapfile(ExtractFilePath(ParamStr(0))+'inputstatemap','state',buttonStateMaplist);
+    loadfuncMapfile(ExtractFilePath(ParamStr(0))+'functionstatemap','state',functionStateMaplist);
+    loadfuncMapfile(ExtractFilePath(ParamStr(0))+'inputmap','buttons',buttonmaplist);
+    loadfuncMapfile(ExtractFilePath(ParamStr(0))+'functionmap','functions',functionmaplist);
+    fillTimeCombo;
+fillCombo(Combo_function_Name,functionmaplist);
+fillCombo(combo_inpstate,buttonStateMaplist);
+fillCombo(combo_inpbutton,buttonmaplist);
+fillCombo(combo_outpstate1,functionStateMaplist);
+
+
+end;
+procedure tform1.fillCombo(combo:TComboBox;list:Tmaplist);
+var
+  i:integer;
+begin
+combo.Clear;
+     for i := 0 to length(list)-1 do
+     begin
+       combo.AddItem(list[i].name,nil);
+     end;
+
+end;
+
+procedure TForm1.fillTimeCombo;
+var
+  i:integer;
+begin
+            for i := 0 to 63 do
  begin
-   combo_inpport.AddItem(inttostr(i+1),nil);
    if i < 24 then
    begin
      if i < 10 then
@@ -256,14 +396,7 @@ begin
 
      end;
      end;
-
-
-
    end;
-
-
-
-  combo_inpport.ItemIndex:=0;
   Combo_tomin.ItemIndex:=59;
   Combo_frmmin.ItemIndex:=0;
   Combo_frmhr.ItemIndex:=0;
@@ -274,8 +407,12 @@ procedure TForm1.loadfile;
 var
 i:integer;
 filestrings,rulestrings:tstringlist;
-
+ g:TGuid;
 begin
+
+
+
+
  filestrings:=TStringList.Create;
  if OpenDialog1.Execute then
  begin
@@ -310,9 +447,14 @@ begin
     rulelist[i].minstart:=rulestrings[11];
     rulelist[i].hrend:=rulestrings[12];
     rulelist[i].minend:=rulestrings[13];
+    CreateGUID(g);
+    if rulestrings[14]='0' then
+    rulelist[i].guid:=GUIDToString(g)
+    else
     rulelist[i].guid:=rulestrings[14];
     rulelist[i].lpressec:=rulestrings[15];
-
+    rulelist[i].mapbuttonname:=getNameFromMaplist(rulelist[i].inpbus,rulelist[i].inpmodule,rulelist[i].inpport,buttonmaplist);
+    rulelist[i].mapfunctionname:=getNameFromMaplist(rulelist[i].outpbus,rulelist[i].outpmodule,rulelist[i].outpport,functionmaplist);
     finally
       FreeAndNil(rulestrings);
 
@@ -323,11 +465,53 @@ begin
       FreeAndNil(filestrings);
    except
        FreeAndNil(filestrings);
-       ShowMessage('Error reading file');
+       ShowMessage('Error reading rule file');
    end;
 
 
 end;
+
+
+procedure TForm1.loadMapFile(filename:string; maplist: Tmaplist);
+var
+i:integer;
+filestrings,mapstrings:tstringlist;
+
+begin
+ mapstrings:=TStringList.Create;
+ filestrings:=TStringList.Create;
+  filestrings.LoadFromFile(filename);
+  SetLength(maplist,mapstrings.Count);
+   try
+  for i := 0 to filestrings.Count-1 do
+  begin
+    if trim(filestrings[i])<>'' then
+    begin
+    try
+    mapstrings:=TStringList.Create;
+    mapstrings.Delimiter:=',';
+    mapstrings.StrictDelimiter:=true;
+    mapstrings.DelimitedText:=filestrings[i];
+    maplist[i].name:=mapstrings[0];
+    maplist[i].bus:=mapstrings[1];
+    maplist[i].module:=mapstrings[2];
+    maplist[i].port:=mapstrings[3];
+
+    finally
+      FreeAndNil(mapstrings);
+
+    end;
+
+    end;
+  end;
+      FreeAndNil(filestrings);
+   except
+       FreeAndNil(filestrings);
+       ShowMessage('Error reading map file ' +filename);
+   end;
+
+end;
+
 
 procedure TForm1.MenuItem11Click(Sender: TObject);
 begin
@@ -426,25 +610,19 @@ begin
 
  for i := 0 to length(rulelist)-1 do
  begin
-   addstring:=rulelist[i].rulegroup +','+  rulelist[i].rulename+','+ rulelist[i].inpbus +','+  rulelist[i].inpmodule+','+ rulelist[i].inpport +','+ rulelist[i].inpstate
-   +','+ rulelist[i].outpbus +','+ rulelist[i].outpmodule +','+ rulelist[i].outpport +','+ rulelist[i].outpstate +','+ rulelist[i].hrstart +','+ rulelist[i].minstart +','+ rulelist[i].hrend
-   +','+ rulelist[i].minend +','+ rulelist[i].guid +','+ rulelist[i].lpressec;
+   addstring:= ComposeRule(rulelist[i]);
     sfile.Add(addstring);
 
  end;
  sfile.SaveToFile(filename);
   if SaveAs then
  ShowMessage('file saved to: '+filename);
-
-
-
-
-
-
-
-
-
-
+end;
+function tform1.ComposeRule(rrec:TruleRec):string;
+begin
+ result:= rrec.rulegroup +','+  rrec.rulename+','+ rrec.inpbus +','+  rrec.inpmodule+','+ rrec.inpport +','+ rrec.inpstate
+   +','+ rrec.outpbus +','+ rrec.outpmodule +','+ rrec.outpport +','+ rrec.outpstate +','+ rrec.hrstart +','+ rrec.minstart +','+ rrec.hrend
+   +','+ rrec.minend +','+ rrec.guid +','+ rrec.lpressec;
 
 
 end;
@@ -453,8 +631,8 @@ procedure TForm1.MenuItem2Click(Sender: TObject);
 begin
   loadfile;
   refreshdata;
-  if TreeView1.items.Count>0 then
-    TreeView1.Selected :=TreeView1.Items[0];
+  //if TreeView1.items.Count>0 then
+   // TreeView1.Selected. :=TreeView1.Items[0];
 end;
 
 procedure TForm1.Panel1Click(Sender: TObject);
@@ -464,50 +642,57 @@ end;
 
 procedure TForm1.refreshdata;
 var
-tn,tn1:TTreeNode;
-i:integer;
 
+i,j:integer;
 found:boolean;
+
 begin
- found:=false;
+  TreeView1.Items.Clear;
 
-
- TreeView1.Items.Clear;
- combo_rulegroup.Clear;
- for i := 0 to length(rulelist)-1 do
- begin
-   tn := TreeView1.Items.FindNodeWithText(rulelist[i].rulegroup) ;
-   if tn= nil then
-   begin
-        TreeView1.Items.add(nil,rulelist[i].rulegroup);
-        tn := TreeView1.Items.FindNodeWithText(rulelist[i].rulegroup) ;
-        combo_rulegroup.AddItem(rulelist[i].rulegroup,nil);
-   end;
-   end;
-   combo_rulegroup.text:=lastgroup;
   for i := 0 to length(rulelist)-1 do
- begin
-      tn := TreeView1.Items.FindNodeWithText(rulelist[i].rulegroup) ;
-      tn1:=nil;
-      tn1:= tn.FindNode(rulelist[i].rulename);
-      if tn1=nil then
-   tn1:=TreeView1.Items.AddChild(TreeView1.Items.FindNodeWithText(rulelist[i].rulegroup),rulelist[i].rulename);
-
-   end;
-
- tn := TreeView1.Items.FindNodeWithText(lastgroup);
- if tn <> nil then
-    begin
-      tn1 := tn.FindNode(lastrule);
-       if tn1 <> nil then
-         begin
-            TreeView1.Selected := tn1;
-
-          end;
-
-
+  begin
+     addRuleToTreeview(rulelist[i],TreeView1);
     end;
+  end;
 
+
+
+
+  procedure TForm1.addRuleToTreeview(var rulerec: TruleRec; treeview: TTreeView);
+var
+  tn,tn1:TTreeNode;
+begin
+ new(prulerec);
+     tn :=  getTreenode(rulerec.rulegroup ,TreeView1);
+    if  tn <> nil then
+    begin
+    tn1 := TreeView1.Items.AddChild(tn,rulerec.rulename);
+    prulerec:=@rulerec;
+    tn1.Data:=prulerec;
+
+end;
+
+end;
+
+function TForm1.getTreenode(nodename: string; treeview: ttreeview): ttreenode;
+var
+j:integer;
+begin
+   for j := 0 to TreeView1.Items.Count-1 do
+    begin
+      if TreeView1.Items[j].Text = nodename then
+      begin
+      result := treeview.items[j];
+      break;
+      end
+      else
+   result:=nil;
+
+    end ;
+  if TreeView1.Items.Count =0 then
+   result:=nil;
+    if result=nil then
+   result:= TreeView1.Items.Add(nil,nodename);
 end;
 
 procedure TForm1.SdpoSerial1RxData(Sender: TObject);
@@ -530,54 +715,45 @@ var
 n:TTreeNode;
 begin
  try
- if TreeView1.Items.Count>0 then
- if TreeView1.Selected.Level=1 then
+ if TreeView1.Selected<>nil then
+if TreeView1.Selected.Data<>nil then
    begin
+   memo2.Text:=ComposeRule(rulerecpointer(TreeView1.Selected.Data)^);
+   current_rule:=rulerecpointer(TreeView1.Selected.Data)^.guid;
 
-
- n:= TreeView1.Selected.Parent;
- if n <> nil then
- begin
-      lastgroup:=n.Text;
-      lastrule:=TreeView1.Selected.Text;
-
- end;
-    PopulateDataFields;
-
- end;
+   PopulateDataFields;
+   end;
    except
 
    end;
 
-end;
+
+   end;
+
+
 
 procedure TForm1.PopulateDataFields;
 var
 i:integer;
 begin
- for i := 0 to Length(rulelist)-1 do
- begin
-   if (rulelist[i].rulegroup=TreeView1.Selected.Parent.Text) and (rulelist[i].rulename=TreeView1.Selected.Text) then
-   begin
-     combo_rulegroup.Text:=rulelist[i].rulegroup;
-     combo_rulename.Text:=rulelist[i].rulename;
-     Combo_frmhr.Text:=rulelist[i].hrstart;
-     Combo_frmmin.Text:=rulelist[i].minstart;
-     combo_inpbus.Text:=rulelist[i].inpbus;
-     combo_inpport.Text:=rulelist[i].inpport;
-     combo_inpstate.Text:=rulelist[i].inpstate;
-     Combo_longpress_sec.Text:=rulelist[i].lpressec;
-     combo_outpmodule.Text:=rulelist[i].outpmodule;
-     combo_outpport.Text:=rulelist[i].outpport;
-     combo_outpstate.Text:=rulelist[i].outpstate;
-     Combo_tohr.Text:=rulelist[i].hrend;
-     Combo_tomin.Text:=rulelist[i].minend;
-     Combo_outputbus.text:=rulelist[i].outpbus;
+     loadingdata:=true;
+     combo_rulegroup.Text:=rulerecpointer(TreeView1.Selected.Data)^.rulegroup;
+     combo_rulename.Text:=rulerecpointer(TreeView1.Selected.Data)^.rulename;
+     Combo_frmhr.Text:=rulerecpointer(TreeView1.Selected.Data)^.hrstart;
+     Combo_frmmin.Text:=rulerecpointer(TreeView1.Selected.Data)^.minstart;
+     combo_inpbutton.Text:=rulerecpointer(TreeView1.Selected.Data)^.mapbuttonname;
+  //   combo_inpport.Text:=rulelist[i].inpport;
+   combo_inpstate.Text:=rulerecpointer(TreeView1.Selected.Data)^.mapbuttonstate;
+   Combo_longpress_sec.Text:=rulerecpointer(TreeView1.Selected.Data)^.lpressec;
+   Combo_function_Name.Text:=rulerecpointer(TreeView1.Selected.Data)^.mapfunctionname;
+  //   combo_outpport.Text:=rulelist[i].outpport;
+ combo_outpstate1.Text:=rulerecpointer(TreeView1.Selected.Data)^.mapfuctionstate;
+     Combo_tohr.Text:=rulerecpointer(TreeView1.Selected.Data)^.hrend;
+     Combo_tomin.Text:=rulerecpointer(TreeView1.Selected.Data)^.minend;
+    // Combo_outputbus.text:=rulerecpointer(TreeView1.Selected.Data)^.outpbus;
+     loadingdata:=false;
 
 
-
-   end;
- end;
 
 end;
 
@@ -586,75 +762,122 @@ var
 found:boolean;
 i,foundindex:integer;
 newname:string;
+g:tguid;
 begin
+ {
  found:=false;
+ if not SaveAs then
+begin
  for i := 0 to Length(rulelist)-1 do
  begin
-   if (rulelist[i].rulegroup=combo_rulegroup.Text) and (rulelist[i].rulename=combo_rulename.Text) then
+   if rulelist[i].guid=current_rule then
    begin
-     if not saveas then
           begin
-                WriteToArray(rulelist[i]);
+                WriteToArray(rulelist[i],current_rule);
                 found:=true;
                 break;
-
-          end
-          else
-          begin
-           found:=true;
-           break;
-          end;
+          end ;
+    end;
    end;
-  end;
- if not found then saveas:=true;
+ end;
+  }
 
 
-
-if saveas then
+   if not SaveAs then
  begin
-   if found then
-    begin
-          newname:= InputBox('Name exists, enter new name','Enter new name!','');
-           if trim(newname)<>''then
-            begin
-                 combo_rulename.Text:=newname;
-                SetLength(rulelist,length(rulelist)+1);
-                WriteToArray(rulelist[length(rulelist)-1]);
+    WriteToArray(rulerecpointer(TreeView1.Selected.Data)^,rulerecpointer(TreeView1.Selected.Data)^.guid);
 
-            end
-           else
-           ShowMessage('Empty name, nothing saved..');
-   end
-   else
-   begin
+ end;
+
+ if SaveAs then
+ begin
+   CreateGUID(g);
    SetLength(rulelist,length(rulelist)+1);
-   WriteToArray(rulelist[length(rulelist)-1]);
+   WriteToArray(rulelist[length(rulelist)-1],GUIDToString(g));
+   addRuleToTreeview(rulelist[length(rulelist)-1],TreeView1);
    end;
  end;
 
 
 
+
+procedure TForm1.TreeView1DragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; var Accept: Boolean);
+begin
+  Accept:=true;
 end;
 
-procedure TForm1.WriteToArray(var Avalue: TruleRec);
+procedure TForm1.WriteToArray(var Avalue: TruleRec;guid:string);
+var
+g:TGuid;
+
 begin
+     CreateGUID(g);
+
      Avalue.rulegroup:=combo_rulegroup.Text;
-    Avalue.rulename:=combo_rulename.Text;
-    Avalue.inpbus:=combo_inpbus.Text;
-    Avalue.inpmodule:='0';
-    Avalue.inpport:=combo_inpport.Text;
-    Avalue.inpstate:=combo_inpstate.Text;
-    Avalue.outpbus:=Combo_outputbus.text;
-    Avalue.outpmodule:=combo_outpmodule.Text;
-    Avalue.outpport:=combo_outpport.Text;
-    Avalue.outpstate:=combo_outpstate.Text;
+     Avalue.rulename:=combo_rulename.Text;
+    Avalue.inpbus:=getValFromMaplist(combo_inpbutton.Text,'bus',buttonmaplist);
+    Avalue.inpmodule:=getValFromMaplist(combo_inpbutton.Text,'module',buttonmaplist);
+    Avalue.inpport:= getValFromMaplist(combo_inpbutton.Text,'port',buttonmaplist);
+    Avalue.inpstate:=getValFromMaplist(combo_inpstate.Text,'state',buttonStateMaplist);
+    Avalue.outpbus:=getValFromMaplist(Combo_outputbus.text,'state',functionStateMaplist);
+    Avalue.outpmodule:=getValFromMaplist(combo_outpmodule.Text,'module', functionmaplist);
+    Avalue.outpport:=getValFromMaplist(combo_outpport.Text,'port',functionmaplist);
+    Avalue.outpstate:=getValFromMaplist(combo_outpstate.Text,'state',functionmaplist);
     Avalue.hrstart:=Combo_frmhr.Text;
     Avalue.minstart:=Combo_frmmin.Text;
     Avalue.hrend:=Combo_tohr.Text;
     Avalue.minend:=Combo_tomin.Text;
-    Avalue.guid:='0';
     Avalue.lpressec:=Combo_longpress_sec.text;
+    if guid='' then
+    Avalue.guid:=GUIDToString(g)
+    else
+    Avalue.guid:=guid;
+    Avalue.mapbuttonname:=combo_inpbutton.Text;
+    Avalue.mapbuttonstate:=combo_inpstate.Text;
+    Avalue.mapfuctionstate:=combo_outpstate1.Text;
+    Avalue.mapfunctionname:=Combo_function_Name.Text;
+
 end;
+
+function TForm1.getNameFromMaplist(bus,module,port:string;list:Tmaplist) :string;
+var
+i:integer;
+begin
+    for i := 0 to Length(list)-1 do
+    begin
+        if (list[i].bus = bus) and (list[i].port = port) and (list[i].module=module) then
+        begin
+           Result:=list[i].name;
+           break;
+        end;
+    end;
+end;
+function TForm1.getValFromMaplist(Mapname,valToGet:string;list:Tmaplist) :string;
+var
+i:integer;
+begin
+    for i := 0 to Length(list)-1 do
+    begin
+        if Mapname= list[i].name then
+        begin
+        if valToGet='bus' then
+           Result:=list[i].bus
+           else
+           if valToGet='module' then
+           Result:=list[i].module
+           else
+           if valToGet='port' then
+           Result:=list[i].port
+           else
+           if valToGet='state' then
+           Result:=list[i].state;
+           break;
+        end;
+    end;
+end;
+
+
 
 procedure TForm1.GenArduinoRules(var A: Tstringlist);
 var

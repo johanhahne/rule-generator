@@ -1,0 +1,55 @@
+object frmSerialSettings: TfrmSerialSettings
+  Left = 1339
+  Height = 174
+  Top = 165
+  Width = 247
+  BorderStyle = bsSingle
+  Caption = 'Serial Settings'
+  ClientHeight = 174
+  ClientWidth = 247
+  OnShow = FormShow
+  LCLVersion = '1.6.0.4'
+  object Combo_serialSpeed: TComboBox
+    Left = 8
+    Height = 29
+    Top = 29
+    Width = 232
+    ItemHeight = 0
+    ItemIndex = 1
+    Items.Strings = (
+      '4800'
+      '9600'
+      '57600'
+      '115200'
+    )
+    TabOrder = 0
+    Text = '9600'
+  end
+  object Combo_serial_ports: TComboBox
+    Left = 8
+    Height = 29
+    Top = 72
+    Width = 232
+    ItemHeight = 0
+    TabOrder = 1
+    Text = 'Combo_serial_ports'
+  end
+  object Button1: TButton
+    Left = 165
+    Height = 25
+    Top = 136
+    Width = 75
+    Caption = 'Ok'
+    OnClick = Button1Click
+    TabOrder = 2
+  end
+  object Button2: TButton
+    Left = 8
+    Height = 25
+    Top = 136
+    Width = 75
+    Caption = 'Cancel'
+    OnClick = Button2Click
+    TabOrder = 3
+  end
+end

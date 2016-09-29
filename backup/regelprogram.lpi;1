@@ -38,7 +38,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="regelprogram.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -67,6 +67,13 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit3"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="unit4.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form2"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Unit4"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
