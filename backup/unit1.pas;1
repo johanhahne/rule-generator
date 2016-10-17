@@ -453,8 +453,11 @@ begin
     else
     rulelist[i].guid:=rulestrings[14];
     rulelist[i].lpressec:=rulestrings[15];
+    rulelist[i].mapbuttonstate:=rulestrings[16];
+    rulelist[i].mapfuctionstate:=rulestrings[17];
     rulelist[i].mapbuttonname:=getNameFromMaplist(rulelist[i].inpbus,rulelist[i].inpmodule,rulelist[i].inpport,buttonmaplist);
     rulelist[i].mapfunctionname:=getNameFromMaplist(rulelist[i].outpbus,rulelist[i].outpmodule,rulelist[i].outpport,functionmaplist);
+
     finally
       FreeAndNil(rulestrings);
 
@@ -622,7 +625,7 @@ function tform1.ComposeRule(rrec:TruleRec):string;
 begin
  result:= rrec.rulegroup +','+  rrec.rulename+','+ rrec.inpbus +','+  rrec.inpmodule+','+ rrec.inpport +','+ rrec.inpstate
    +','+ rrec.outpbus +','+ rrec.outpmodule +','+ rrec.outpport +','+ rrec.outpstate +','+ rrec.hrstart +','+ rrec.minstart +','+ rrec.hrend
-   +','+ rrec.minend +','+ rrec.guid +','+ rrec.lpressec;
+   +','+ rrec.minend +','+ rrec.guid +','+ rrec.lpressec+','+ rrec.mapbuttonstate+','+ rrec.mapfuctionstate;
 
 
 end;

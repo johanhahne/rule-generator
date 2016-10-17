@@ -455,6 +455,7 @@ begin
     rulelist[i].lpressec:=rulestrings[15];
     rulelist[i].mapbuttonstate:=rulestrings[16];
     rulelist[i].mapfuctionstate:=rulestrings[17];
+
     rulelist[i].mapbuttonname:=getNameFromMaplist(rulelist[i].inpbus,rulelist[i].inpmodule,rulelist[i].inpport,buttonmaplist);
     rulelist[i].mapfunctionname:=getNameFromMaplist(rulelist[i].outpbus,rulelist[i].outpmodule,rulelist[i].outpport,functionmaplist);
 

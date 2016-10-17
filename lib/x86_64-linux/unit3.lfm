@@ -1,5 +1,5 @@
 object FrmSerialMonitor: TFrmSerialMonitor
-  Left = 2711
+  Left = 791
   Height = 948
   Top = 0
   Width = 846
