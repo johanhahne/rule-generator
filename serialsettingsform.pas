@@ -1,4 +1,4 @@
-unit Unit2;
+unit serialsettingsform;
 
 {$mode objfpc}{$H+}
 
@@ -18,6 +18,7 @@ type
     Combo_serial_ports: TComboBox;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
@@ -42,6 +43,7 @@ begin
    Combo_serial_ports.clear;
    serials:=tstringlist.create;
   FindAllFiles(serials,'/dev/','ttyUSB*',false,faAnyFile);
+  FindAllFiles(serials,'/dev/','ttyACM*',false,faAnyFile);
    for j := 0 to serials.Count -1 do
          begin
          Combo_serial_ports.AddItem(serials[j],nil);
@@ -61,6 +63,11 @@ procedure TfrmSerialSettings.Button2Click(Sender: TObject);
 begin
   self.ModalResult:=mrNone;
   self.Close;
+end;
+
+procedure TfrmSerialSettings.FormCreate(Sender: TObject);
+begin
+
 end;
 
 end.

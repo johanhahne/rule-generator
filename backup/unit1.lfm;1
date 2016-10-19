@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 2437
+  Left = 2550
   Height = 701
-  Top = 134
+  Top = 135
   Width = 891
   Caption = 'Form1'
   ClientHeight = 678
@@ -82,6 +82,7 @@ object Form1: TForm1
           ''
         )
         OnChange = compChange
+        Style = csDropDownList
         TabOrder = 0
         Text = 'down'
       end
@@ -96,8 +97,8 @@ object Form1: TForm1
           ''
         )
         OnChange = compChange
+        Style = csDropDownList
         TabOrder = 1
-        Text = '3'
       end
       object Label1: TLabel
         Left = 8
@@ -314,9 +315,9 @@ object Form1: TForm1
       TabOrder = 6
     end
     object btnconnectserial: TButton
-      Left = 432
+      Left = 382
       Height = 25
-      Top = 528
+      Top = 16
       Width = 123
       Caption = 'Connect'
       OnClick = btnconnectserialClick
@@ -374,6 +375,7 @@ object Form1: TForm1
           ''
         )
         OnChange = compChange
+        Style = csDropDownList
         TabOrder = 0
         Text = 'off'
       end
@@ -406,6 +408,7 @@ object Form1: TForm1
           '3'
         )
         OnChange = compChange
+        Style = csDropDownList
         TabOrder = 1
         Text = '1'
       end
@@ -413,41 +416,41 @@ object Form1: TForm1
         Left = 136
         Height = 29
         Top = 64
-        Width = 52
+        Width = 50
         ItemHeight = 0
         OnChange = compChange
+        Style = csDropDownList
         TabOrder = 2
-        Text = '00'
       end
       object Combo_frmmin: TComboBox
         Left = 200
         Height = 29
         Top = 64
-        Width = 52
+        Width = 50
         ItemHeight = 0
         OnChange = compChange
+        Style = csDropDownList
         TabOrder = 3
-        Text = 'Combo_frmmin'
       end
       object Combo_tohr: TComboBox
         Left = 280
         Height = 29
         Top = 64
-        Width = 48
+        Width = 50
         ItemHeight = 0
         OnChange = compChange
+        Style = csDropDownList
         TabOrder = 4
-        Text = '23'
       end
       object Combo_tomin: TComboBox
-        Left = 336
+        Left = 344
         Height = 29
         Top = 64
-        Width = 48
+        Width = 56
         ItemHeight = 0
         OnChange = compChange
+        Style = csDropDownList
         TabOrder = 5
-        Text = 'Combo_tomin'
       end
       object Label10: TLabel
         Left = 264
@@ -590,9 +593,18 @@ object Form1: TForm1
       Top = 444
       Width = 115
       Anchors = [akLeft, akBottom]
-      Caption = 'Save current rule'
+      Caption = 'Save as new rule'
       OnClick = Button6Click
       TabOrder = 13
+    end
+    object btnTestRule: TButton
+      Left = 421
+      Height = 25
+      Top = 416
+      Width = 75
+      Caption = 'Test Rule'
+      OnClick = btnTestRuleClick
+      TabOrder = 14
     end
   end
   object Panel2: TPanel

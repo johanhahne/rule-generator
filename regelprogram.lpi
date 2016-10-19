@@ -44,28 +44,26 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="unit1.pas"/>
+        <Filename Value="mainform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Unit1"/>
+        <UnitName Value="mainForm"/>
       </Unit1>
       <Unit2>
-        <Filename Value="unit2.pas"/>
+        <Filename Value="serialsettingsform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmSerialSettings"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Unit2"/>
       </Unit2>
       <Unit3>
-        <Filename Value="unit3.pas"/>
+        <Filename Value="serialmonitorform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FrmSerialMonitor"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Unit3"/>
       </Unit3>
       <Unit4>
         <Filename Value="unit4.pas"/>

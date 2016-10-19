@@ -1,4 +1,4 @@
-unit Unit1;
+unit mainForm;
 
 {$mode objfpc}{$H+}
 
@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  StdCtrls, Menus, ExtCtrls, SdpoSerial,contnrs, simpleipc,Unit2,Unit3, db;
+  StdCtrls, Menus, ExtCtrls, SdpoSerial,contnrs, simpleipc,serialsettingsform,serialmonitorform, db;
 
 type
 
@@ -41,6 +41,7 @@ type
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
+    btnTestRule: TButton;
     Combo_frmhr: TComboBox;
     Combo_frmmin: TComboBox;
     combo_inpbus1: TComboBox;
@@ -105,6 +106,7 @@ type
     Splitter1: TSplitter;
     TreeView1: TTreeView;
     procedure btnconnectserialClick(Sender: TObject);
+    procedure btnTestRuleClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -140,6 +142,7 @@ type
     procedure DeleteFromrules(var A: Trulelist; const Index: Cardinal);
     procedure fillCombo(combo:TComboBox;list:Tmaplist);
     procedure fillTimeCombo;
+    function GenArduinoRule(var rulerec: TruleRec): string;
     function getNameFromMaplist(bus,module, port: string; list: Tmaplist): string;
     function getTreenode(nodename: string;treeview:ttreeview): ttreenode;
 
@@ -148,6 +151,7 @@ type
     procedure loadMapFile(filename: string; maplist: Tmaplist);
     procedure resetChangedColors;
     procedure loadfuncMapfile(filename,listtype:string;var  list:Tmaplist);
+    procedure updateTreenode(treeview: TTreeView);
     { private declarations }
   public
     { public declarations }
@@ -162,6 +166,7 @@ type
    changed_controls: TObjectList;
    loadingdata:boolean;
    prulerec:rulerecpointer;
+   serialdata:string;
   end;
 
 var
@@ -177,28 +182,50 @@ procedure TForm1.btnconnectserialClick(Sender: TObject);
 begin
        if SdpoSerial1.Active then
        begin
-       SdpoSerial1.Active := false;
-       btnconnectserial.Caption:='Not Connected';
+         SdpoSerial1.Active := false;
+         btnconnectserial.Caption:='Connect';
+       end
+       else
+       begin
+            if frmSerialSettings.ShowModal=mrOK then
+          begin
+            if SdpoSerial1.Active then SdpoSerial1.active:=false;
+           case frmSerialSettings.Combo_serialSpeed.text of
+               '4800': SdpoSerial1.BaudRate:=br__4800 ;
+               '9600': SdpoSerial1.BaudRate:=br__9600 ;
+               '57600': SdpoSerial1.BaudRate:=br_57600;
+               '115200': SdpoSerial1.BaudRate:=br115200 ;
+          end;
+            SdpoSerial1.Device:=frmSerialSettings.Combo_serial_ports.Text;
+           try
+           SdpoSerial1.Active:=true;
+
+           finally
+           if SdpoSerial1.Active then
+             begin
+                  FrmSerialMonitor.Memo1.lines.Clear;
+                  btnconnectserial.Caption:='Connected';
+                  FrmSerialMonitor.Visible:= true;
+             end;
+           end;
+
+          end;
        end;
-    if frmSerialSettings.ShowModal=mrOK then
-  begin
-    if SdpoSerial1.Active then SdpoSerial1.active:=false;
-   case frmSerialSettings.Combo_serialSpeed.text of
-       '4800': SdpoSerial1.BaudRate:=br__4800 ;
-       '9600': SdpoSerial1.BaudRate:=br__9600 ;
-       '57600': SdpoSerial1.BaudRate:=br_57600;
-       '115200': SdpoSerial1.BaudRate:=br115200 ;
-  end;
-    SdpoSerial1.Device:=frmSerialSettings.Combo_serial_ports.Text;
-   try
-   SdpoSerial1.Active:=true;
-
-   finally
-   if SdpoSerial1.Active then btnconnectserial.Caption:='Connected';
-   end;
-
-  end;
  end;
+
+procedure TForm1.btnTestRuleClick(Sender: TObject);
+var
+  i:integer;
+begin
+    for i := 0 to Length(rulelist) do
+    begin
+       if rulelist[i].guid = rulerecpointer(TreeView1.Selected.Data)^.guid then
+       begin
+       SdpoSerial1.WriteData('!'+ GenArduinoRule(rulelist[i])+'#'+#10);
+       break;
+       end;
+    end;
+end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
@@ -417,7 +444,7 @@ begin
  if OpenDialog1.Execute then
  begin
  filename:=OpenDialog1.FileName;
- filestrings.SaveToFile(filename+'.bak');
+ //filestrings.SaveToFile(filename+'.bak');
  filestrings.LoadFromFile(filename);
  filestrings.SaveToFile(filename+'.bak');
 
@@ -429,6 +456,10 @@ begin
     if trim(filestrings[i])<>'' then
     begin
     try
+
+
+
+
     rulestrings:=TStringList.Create;
     rulestrings.Delimiter:=',';
     rulestrings.StrictDelimiter:=true;
@@ -702,11 +733,37 @@ end;
 procedure TForm1.SdpoSerial1RxData(Sender: TObject);
 var
 tmpstr:string;
+spos,epos:integer;
 begin
-FrmSerialMonitor.Memo1.lines.add(SdpoSerial1.ReadData) ;
-FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
-FrmSerialMonitor.Memo1.SelLength:=0;
-FrmSerialMonitor.Memo1.SetFocus;
+
+ //while SdpoSerial1.DataAvailable do
+
+serialdata:=serialdata+SdpoSerial1.ReadData;
+spos := Pos('!', serialdata);
+epos := Pos('#', serialdata);
+while (spos > 0) and (epos > 0) do
+begin
+spos := Pos('!', serialdata);
+epos := Pos('#', serialdata);
+
+    //  if (spos > 0) and (epos > 0) then
+    //  begin
+    if  trim(Copy(serialdata, spos + 1, epos-2)) <> '' then
+      FrmSerialMonitor.Memo1.lines.add(trim(Copy(serialdata, spos + 1, epos-2))) ;
+      FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
+      FrmSerialMonitor.Memo1.SelLength:=0;
+      FrmSerialMonitor.Memo1.SetFocus;
+
+       serialdata := Copy(serialdata, epos + 1, Length(serialdata));
+    //  end;
+
+
+
+
+ end;
+
+
+
 end;
 
 procedure TForm1.TreeView1Change(Sender: TObject; Node: TTreeNode);
@@ -790,19 +847,23 @@ begin
    if not SaveAs then
  begin
     WriteToArray(rulerecpointer(TreeView1.Selected.Data)^,rulerecpointer(TreeView1.Selected.Data)^.guid);
-
+    updateTreenode(TreeView1);
  end;
 
  if SaveAs then
  begin
    CreateGUID(g);
    SetLength(rulelist,length(rulelist)+1);
+
    WriteToArray(rulelist[length(rulelist)-1],GUIDToString(g));
-   addRuleToTreeview(rulelist[length(rulelist)-1],TreeView1);
+     addRuleToTreeview(rulelist[length(rulelist)-1],TreeView1);
    end;
  end;
-
-
+  procedure tform1.updateTreenode(treeview:TTreeView);
+  begin
+   treeview.Selected.Text:=rulerecpointer(TreeView1.Selected.Data)^.rulename;
+   treeview.Selected.MoveTo(getTreenode(rulerecpointer(TreeView1.Selected.Data)^.rulegroup,treeview),naAddChild);
+  end;
 
 
 procedure TForm1.TreeView1DragOver(Sender, Source: TObject; X, Y: Integer;
@@ -817,17 +878,16 @@ g:TGuid;
 
 begin
      CreateGUID(g);
-
      Avalue.rulegroup:=combo_rulegroup.Text;
      Avalue.rulename:=combo_rulename.Text;
     Avalue.inpbus:=getValFromMaplist(combo_inpbutton.Text,'bus',buttonmaplist);
     Avalue.inpmodule:=getValFromMaplist(combo_inpbutton.Text,'module',buttonmaplist);
     Avalue.inpport:= getValFromMaplist(combo_inpbutton.Text,'port',buttonmaplist);
     Avalue.inpstate:=getValFromMaplist(combo_inpstate.Text,'state',buttonStateMaplist);
-    Avalue.outpbus:=getValFromMaplist(Combo_outputbus.text,'state',functionStateMaplist);
-    Avalue.outpmodule:=getValFromMaplist(combo_outpmodule.Text,'module', functionmaplist);
-    Avalue.outpport:=getValFromMaplist(combo_outpport.Text,'port',functionmaplist);
-    Avalue.outpstate:=getValFromMaplist(combo_outpstate.Text,'state',functionmaplist);
+    Avalue.outpbus:=getValFromMaplist(Combo_function_Name.text,'bus',functionMaplist);
+    Avalue.outpmodule:=getValFromMaplist(Combo_function_Name.Text,'module', functionmaplist);
+    Avalue.outpport:=getValFromMaplist(Combo_function_Name.Text,'port',functionmaplist);
+    Avalue.outpstate:=getValFromMaplist(combo_outpstate1.Text,'state',functionstatemaplist);
     Avalue.hrstart:=Combo_frmhr.Text;
     Avalue.minstart:=Combo_frmmin.Text;
     Avalue.hrend:=Combo_tohr.Text;
@@ -890,13 +950,17 @@ addstring:string;
 begin
   for i := 0 to length(rulelist)-1 do
  begin
-   addstring:=rulelist[i].inpbus +','+ rulelist[i].inpmodule +','+rulelist[i].inpport +','+ rulelist[i].inpstate
-   +','+ rulelist[i].outpbus +','+ rulelist[i].outpmodule +','+ rulelist[i].outpport +','+ rulelist[i].outpstate +','+ rulelist[i].hrstart +','+ rulelist[i].minstart +','+ rulelist[i].hrend
-   +','+ rulelist[i].minend +','+ rulelist[i].lpressec;
+   addstring:=GenArduinoRule(rulelist[i]);
 
     a.Add(addstring);
  end;
 
+end;
+function tform1.GenArduinoRule(var rulerec:TruleRec):string;
+begin
+   result:=rulerec.inpbus +','+ rulerec.inpmodule +','+rulerec.inpport +','+ rulerec.inpstate
+   +','+ rulerec.outpbus +','+ rulerec.outpmodule +','+ rulerec.outpport +','+ rulerec.outpstate +','+ rulerec.hrstart +','+ rulerec.minstart +','+ rulerec.hrend
+   +','+ rulerec.minend +','+ rulerec.lpressec;
 end;
 
 procedure TForm1.SendSerialData(Header, data: string);

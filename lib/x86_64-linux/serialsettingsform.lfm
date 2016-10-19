@@ -1,12 +1,13 @@
 object frmSerialSettings: TfrmSerialSettings
-  Left = 1339
+  Left = 3452
   Height = 174
-  Top = 165
+  Top = 179
   Width = 247
   BorderStyle = bsSingle
   Caption = 'Serial Settings'
   ClientHeight = 174
   ClientWidth = 247
+  OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '1.6.0.4'
   object Combo_serialSpeed: TComboBox
@@ -15,7 +16,7 @@ object frmSerialSettings: TfrmSerialSettings
     Top = 29
     Width = 232
     ItemHeight = 0
-    ItemIndex = 1
+    ItemIndex = 2
     Items.Strings = (
       '4800'
       '9600'
@@ -23,7 +24,7 @@ object frmSerialSettings: TfrmSerialSettings
       '115200'
     )
     TabOrder = 0
-    Text = '9600'
+    Text = '57600'
   end
   object Combo_serial_ports: TComboBox
     Left = 8

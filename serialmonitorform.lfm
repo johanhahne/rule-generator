@@ -1,0 +1,49 @@
+object FrmSerialMonitor: TFrmSerialMonitor
+  Left = 4075
+  Height = 608
+  Top = 348
+  Width = 783
+  Caption = 'Serial Monitor'
+  ClientHeight = 608
+  ClientWidth = 783
+  LCLVersion = '1.6.0.4'
+  object Memo1: TMemo
+    Left = 0
+    Height = 575
+    Top = 0
+    Width = 783
+    Align = alClient
+    Anchors = [akTop, akLeft, akRight]
+    OnChange = Memo1Change
+    ScrollBars = ssVertical
+    TabOrder = 0
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 33
+    Top = 575
+    Width = 783
+    Align = alBottom
+    ClientHeight = 33
+    ClientWidth = 783
+    TabOrder = 1
+    OnClick = Panel1Click
+    object Edit1: TEdit
+      Left = 0
+      Height = 29
+      Top = 3
+      Width = 657
+      Anchors = [akLeft, akRight]
+      TabOrder = 0
+    end
+    object Button1: TButton
+      Left = 669
+      Height = 25
+      Top = 3
+      Width = 107
+      Anchors = [akRight, akBottom]
+      Caption = 'Send command'
+      TabOrder = 1
+    end
+  end
+end
