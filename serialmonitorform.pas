@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  LazHelpHTML, Menus, ExtCtrls;
+  LazHelpHTML, Menus, ExtCtrls,unitconnectionsandstuff;
 
 type
 
@@ -17,6 +17,7 @@ type
     Edit1: TEdit;
     Memo1: TMemo;
     Panel1: TPanel;
+    procedure Button1Click(Sender: TObject);
     procedure Memo1Change(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
   private
@@ -37,6 +38,11 @@ implementation
 procedure TFrmSerialMonitor.Memo1Change(Sender: TObject);
 begin
 
+end;
+
+procedure TFrmSerialMonitor.Button1Click(Sender: TObject);
+begin
+  connectionsandstuff.SdpoSerial1.WriteData('!'+Edit1.Text+'#');
 end;
 
 procedure TFrmSerialMonitor.Panel1Click(Sender: TObject);

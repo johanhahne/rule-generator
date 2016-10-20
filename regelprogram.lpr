@@ -7,7 +7,8 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, mainForm, sdposeriallaz, serialsettingsform, serialmonitorform
+  Forms, mainForm, sdposeriallaz, serialsettingsform, serialmonitorform, 
+unitconnectionsandstuff
   { you can add units after this };
 
 {$R *.res}
@@ -18,6 +19,7 @@ begin
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TfrmSerialSettings, frmSerialSettings);
   Application.CreateForm(TFrmSerialMonitor, FrmSerialMonitor);
+  Application.CreateForm(TConnectionsAndStuff, ConnectionsAndStuff);
   Application.Run;
 end.
 

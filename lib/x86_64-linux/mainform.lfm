@@ -715,19 +715,6 @@ object Form1: TForm1
     left = 616
     top = 16
   end
-  object SdpoSerial1: TSdpoSerial
-    Active = False
-    BaudRate = br___300
-    AltBaudRate = 0
-    DataBits = db8bits
-    Parity = pNone
-    FlowControl = fcNone
-    StopBits = sbOne
-    Device = '/dev/ttyS0'
-    OnRxData = SdpoSerial1RxData
-    left = 572
-    top = 61
-  end
   object MainMenu2: TMainMenu
     left = 826
     top = 122

@@ -43,6 +43,7 @@ object FrmSerialMonitor: TFrmSerialMonitor
       Width = 107
       Anchors = [akRight, akBottom]
       Caption = 'Send command'
+      OnClick = Button1Click
       TabOrder = 1
     end
   end

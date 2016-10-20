@@ -1,0 +1,21 @@
+object ConnectionsAndStuff: TConnectionsAndStuff
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 150
+  HorizontalOffset = 2442
+  VerticalOffset = 253
+  Width = 150
+  object SdpoSerial1: TSdpoSerial
+    Active = False
+    BaudRate = br___300
+    AltBaudRate = 0
+    DataBits = db8bits
+    Parity = pNone
+    FlowControl = fcNone
+    StopBits = sbOne
+    Device = '/dev/ttyS0'
+    OnRxData = SdpoSerial1RxData
+    left = 64
+    top = 48
+  end
+end

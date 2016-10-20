@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  StdCtrls, Menus, ExtCtrls, SdpoSerial,contnrs, simpleipc,serialsettingsform,serialmonitorform, db;
+  StdCtrls, Menus, ExtCtrls, SdpoSerial,contnrs, simpleipc,serialsettingsform,serialmonitorform, db,unitconnectionsandstuff;
 
 type
 
@@ -102,7 +102,6 @@ type
     Panel6: TPanel;
     SaveDialog1: TSaveDialog;
     SaveDialog2: TSaveDialog;
-    SdpoSerial1: TSdpoSerial;
     Splitter1: TSplitter;
     TreeView1: TTreeView;
     procedure btnconnectserialClick(Sender: TObject);
@@ -149,6 +148,7 @@ type
     function getValFromMaplist(Mapname, valToGet: string; list: Tmaplist): string;
 
     procedure loadMapFile(filename: string; maplist: Tmaplist);
+    procedure recievedata(data: string);
     procedure resetChangedColors;
     procedure loadfuncMapfile(filename,listtype:string;var  list:Tmaplist);
     procedure updateTreenode(treeview: TTreeView);
@@ -180,38 +180,47 @@ implementation
 
 procedure TForm1.btnconnectserialClick(Sender: TObject);
 begin
-       if SdpoSerial1.Active then
+       if connectionsandstuff.SdpoSerial1.Active then
        begin
-         SdpoSerial1.Active := false;
+         connectionsandstuff.SdpoSerial1.Active := false;
          btnconnectserial.Caption:='Connect';
        end
        else
        begin
             if frmSerialSettings.ShowModal=mrOK then
           begin
-            if SdpoSerial1.Active then SdpoSerial1.active:=false;
+            if connectionsandstuff.SdpoSerial1.Active then connectionsandstuff.SdpoSerial1.active:=false;
            case frmSerialSettings.Combo_serialSpeed.text of
-               '4800': SdpoSerial1.BaudRate:=br__4800 ;
-               '9600': SdpoSerial1.BaudRate:=br__9600 ;
-               '57600': SdpoSerial1.BaudRate:=br_57600;
-               '115200': SdpoSerial1.BaudRate:=br115200 ;
+               '4800': connectionsandstuff.SdpoSerial1.BaudRate:=br__4800 ;
+               '9600': connectionsandstuff.SdpoSerial1.BaudRate:=br__9600 ;
+               '57600': connectionsandstuff.SdpoSerial1.BaudRate:=br_57600;
+               '115200': connectionsandstuff.SdpoSerial1.BaudRate:=br115200 ;
           end;
-            SdpoSerial1.Device:=frmSerialSettings.Combo_serial_ports.Text;
+            connectionsandstuff.SdpoSerial1.Device:=frmSerialSettings.Combo_serial_ports.Text;
            try
-           SdpoSerial1.Active:=true;
+           connectionsandstuff.SdpoSerial1.Active:=true;
 
            finally
-           if SdpoSerial1.Active then
+           if connectionsandstuff.SdpoSerial1.Active then
              begin
                   FrmSerialMonitor.Memo1.lines.Clear;
                   btnconnectserial.Caption:='Connected';
                   FrmSerialMonitor.Visible:= true;
+                 ConnectionsAndStuff.ReceiveData:=@recievedata;
+              //    ConnectionsAndStuff.SdpoSerial1.OnRxData:=SdpoSerial1RxData;
              end;
            end;
 
           end;
        end;
  end;
+procedure tform1.recievedata( data:string);
+begin
+          FrmSerialMonitor.Memo1.lines.add(data) ;
+      FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
+      FrmSerialMonitor.Memo1.SelLength:=0;
+      FrmSerialMonitor.Memo1.SetFocus;
+end;
 
 procedure TForm1.btnTestRuleClick(Sender: TObject);
 var
@@ -221,7 +230,7 @@ begin
     begin
        if rulelist[i].guid = rulerecpointer(TreeView1.Selected.Data)^.guid then
        begin
-       SdpoSerial1.WriteData('!'+ GenArduinoRule(rulelist[i])+'#'+#10);
+       connectionsandstuff.SdpoSerial1.WriteData('!'+ GenArduinoRule(rulelist[i])+'#'+#10);
        break;
        end;
     end;
@@ -229,7 +238,7 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  SdpoSerial1.WriteData('!4#'+#10);
+  connectionsandstuff.SdpoSerial1.WriteData('!4#'+#10);
 end;
 
 
@@ -277,7 +286,7 @@ end;
 
 procedure TForm1.Button5Click(Sender: TObject);
 begin
-    SdpoSerial1.WriteData('!5#'+#10);
+    connectionsandstuff.SdpoSerial1.WriteData('!5#'+#10);
 end;
 
 procedure TForm1.Button6Click(Sender: TObject);
@@ -599,19 +608,19 @@ begin
 oupstrings:=TStringList.create;
 
 
-    if SdpoSerial1.Active then
+    if connectionsandstuff.SdpoSerial1.Active then
        begin
 
        GenArduinoRules(oupstrings);
-      SdpoSerial1.WriteData('!2#'+#10);
+      connectionsandstuff.SdpoSerial1.WriteData('!2#'+#10);
        for i := 0 to oupstrings.Count -1 do
        begin
 
-         SdpoSerial1.WriteData('!3,'+oupstrings[i]+'#'+#10);
+         connectionsandstuff.SdpoSerial1.WriteData('!3,'+oupstrings[i]+'#'+#10);
          memo2.Append('!3,'+oupstrings[i]+'#'+#10);
           sleep(200);
        end;
-       SdpoSerial1.WriteData('!4#'+#10);
+       connectionsandstuff.SdpoSerial1.WriteData('!4#'+#10);
 
        end
        else
@@ -736,9 +745,9 @@ tmpstr:string;
 spos,epos:integer;
 begin
 
- //while SdpoSerial1.DataAvailable do
+ //while ConnectionsAndStuff.SdpoSerial1.DataAvailable do
 
-serialdata:=serialdata+SdpoSerial1.ReadData;
+serialdata:=serialdata+connectionsandstuff.SdpoSerial1.ReadData;
 spos := Pos('!', serialdata);
 epos := Pos('#', serialdata);
 while (spos > 0) and (epos > 0) do
