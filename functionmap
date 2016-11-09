@@ -3,3 +3,5 @@ lyse i hallen spegel,1,1,11
 lyse i hallen vägg,1,1,10
 lyse i tvrummet,1,3,9
 lyse i siljes kontor,1,1,2
+lyse i tvrummet,1,4,11
+Timer,99,99,1

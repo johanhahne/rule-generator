@@ -38,7 +38,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="8">
       <Unit0>
         <Filename Value="regelprogram.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -78,6 +78,18 @@
         <ComponentName Value="ConnectionsAndStuff"/>
         <ResourceBaseClass Value="DataModule"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="editmapfilesform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Formmapfileeditor"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="mainmdiform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form3"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

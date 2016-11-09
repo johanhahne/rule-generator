@@ -1,11 +1,12 @@
 object FrmSerialMonitor: TFrmSerialMonitor
-  Left = 4075
+  Left = 3030
   Height = 608
-  Top = 348
+  Top = 191
   Width = 783
   Caption = 'Serial Monitor'
   ClientHeight = 608
   ClientWidth = 783
+  FormStyle = fsMDIChild
   LCLVersion = '1.6.0.4'
   object Memo1: TMemo
     Left = 0
@@ -34,6 +35,8 @@ object FrmSerialMonitor: TFrmSerialMonitor
       Top = 3
       Width = 657
       Anchors = [akLeft, akRight]
+      OnChange = Edit1Change
+      OnKeyDown = Edit1KeyDown
       TabOrder = 0
     end
     object Button1: TButton

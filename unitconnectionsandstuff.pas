@@ -9,6 +9,11 @@ uses
 
 type
    TReceiveData = procedure(data:string) of object;
+     TmapRec = record
+    name:string;
+    bus,module,port,state:string;
+  end;
+  Tmaplist = array of TmapRec;
   { TConnectionsAndStuff }
 
   TConnectionsAndStuff = class(TDataModule)

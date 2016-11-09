@@ -6,16 +6,16 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  StdCtrls, Menus, ExtCtrls, SdpoSerial,contnrs, simpleipc,serialsettingsform,serialmonitorform, db,unitconnectionsandstuff;
+  StdCtrls, Menus, ExtCtrls, SdpoSerial,contnrs, simpleipc,serialsettingsform,serialmonitorform, db,unitconnectionsandstuff,editmapfilesform,mainmdiform;
 
 type
 
 
-    TmapRec = record
+  {  TmapRec = record
     name:string;
     bus,module,port,state:string;
   end;
-
+        }
   TruleRec = record
     guid,rulegroup,rulename,inpbus,inpmodule,inpport,inpstate,outpbus,outpport,outpmodule,outpstate,hrstart,minstart,hrend,minend,lpressec,mapbuttonname,mapfunctionname,mapbuttonstate,mapfuctionstate:string;
   end;
@@ -27,7 +27,7 @@ type
   end;
 
   Trulelist = array of TruleRec;
-  Tmaplist = array of TmapRec;
+//  Tmaplist = array of TmapRec;
 
 
 
@@ -36,12 +36,17 @@ type
   TForm1 = class(TForm)
     btnconnectserial: TButton;
     Button1: TButton;
+    Button10: TButton;
+    Button11: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
     btnTestRule: TButton;
+    Button7: TButton;
+    Button8: TButton;
+    Button9: TButton;
     Combo_frmhr: TComboBox;
     Combo_frmmin: TComboBox;
     combo_inpbus1: TComboBox;
@@ -78,21 +83,8 @@ type
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
-    MainMenu1: TMainMenu;
-    MainMenu2: TMainMenu;
-    MainMenu3: TMainMenu;
     Memo1: TMemo;
     Memo2: TMemo;
-    MenuItem1: TMenuItem;
-    MenuItem10: TMenuItem;
-    MenuItem11: TMenuItem;
-    MenuItem2: TMenuItem;
-    MenuItem3: TMenuItem;
-    MenuItem4: TMenuItem;
-    MenuItem5: TMenuItem;
-    MenuItem6: TMenuItem;
-    MenuItem7: TMenuItem;
-    MenuItem8: TMenuItem;
     OpenDialog1: TOpenDialog;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -100,18 +92,24 @@ type
     Panel4: TPanel;
     Panel5: TPanel;
     Panel6: TPanel;
+    Panel7: TPanel;
     SaveDialog1: TSaveDialog;
     SaveDialog2: TSaveDialog;
     Splitter1: TSplitter;
     TreeView1: TTreeView;
     procedure btnconnectserialClick(Sender: TObject);
     procedure btnTestRuleClick(Sender: TObject);
+    procedure Button10Click(Sender: TObject);
+    procedure Button11Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
     procedure compChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure loadfile;
@@ -139,15 +137,18 @@ type
     procedure addRuleToTreeview(var rulerec: TruleRec; treeview: TTreeView);
     function ComposeRule(rrec: TruleRec): string;
     procedure DeleteFromrules(var A: Trulelist; const Index: Cardinal);
-    procedure fillCombo(combo:TComboBox;list:Tmaplist);
+    procedure eventsfromfileedit(Sender: Tobject; Adata: string);
+    procedure fillCombo(combo:TComboBox;list:Tmaplist;Field:string);
     procedure fillTimeCombo;
     function GenArduinoRule(var rulerec: TruleRec): string;
     function getNameFromMaplist(bus,module, port: string; list: Tmaplist): string;
     function getTreenode(nodename: string;treeview:ttreeview): ttreenode;
 
     function getValFromMaplist(Mapname, valToGet: string; list: Tmaplist): string;
+    procedure identifyTriggerInput(Adata: string);
 
     procedure loadMapFile(filename: string; maplist: Tmaplist);
+    procedure readMapfilesAndFillCombos;
     procedure recievedata(data: string);
     procedure resetChangedColors;
     procedure loadfuncMapfile(filename,listtype:string;var  list:Tmaplist);
@@ -220,6 +221,8 @@ begin
       FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
       FrmSerialMonitor.Memo1.SelLength:=0;
       FrmSerialMonitor.Memo1.SetFocus;
+          if pos('mapbutton',data) > 0 then
+      identifyTriggerInput(data);
 end;
 
 procedure TForm1.btnTestRuleClick(Sender: TObject);
@@ -236,6 +239,16 @@ begin
     end;
 end;
 
+procedure TForm1.Button10Click(Sender: TObject);
+begin
+  serialmonitorform.FrmSerialMonitor.Visible:= not   serialmonitorform.FrmSerialMonitor.Visible;
+end;
+
+procedure TForm1.Button11Click(Sender: TObject);
+begin
+   Formmapfileeditor.Visible:= not   Formmapfileeditor.Visible;
+end;
+
 procedure TForm1.Button1Click(Sender: TObject);
 begin
   connectionsandstuff.SdpoSerial1.WriteData('!4#'+#10);
@@ -245,7 +258,7 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  SaveRules(true);
+SaveRules(true);
 refreshdata;
 SaveFile(false);
 end;
@@ -300,6 +313,22 @@ begin
  resetChangedColors
 end;
 
+procedure TForm1.Button7Click(Sender: TObject);
+begin
+    loadfile;
+  refreshdata;
+end;
+
+procedure TForm1.Button8Click(Sender: TObject);
+begin
+  SaveFile(false);
+end;
+
+procedure TForm1.Button9Click(Sender: TObject);
+begin
+  SaveFile(true);
+end;
+
 procedure TForm1.compChange(Sender: TObject);
 begin
 
@@ -331,7 +360,7 @@ filestrings,rulestrings:tstringlist;
 begin
  filestrings:=TStringList.Create;
  filestrings.LoadFromFile(filename);
-
+  list:=Default(Tmaplist);
   SetLength(list,filestrings.Count);
    try
   for i := 0 to filestrings.Count-1 do
@@ -373,26 +402,83 @@ var
   i:integer;
 begin
     changed_controls:=TObjectList.create(False);
-          loadfuncMapfile(ExtractFilePath(ParamStr(0))+'inputstatemap','state',buttonStateMaplist);
+       fillTimeCombo;
+       readMapfilesAndFillCombos;
+       Formmapfileeditor.changedRadio:=@eventsfromfileedit;
+       Formmapfileeditor.Visible:=false;
+
+           form1.Top := 1;
+         form1.Left := 1;
+         form1.Align:=alClient;
+         form1.BorderStyle := bsNone;
+           form1.Parent:=Form3;
+           //form1.Show;
+end;
+procedure tform1.eventsfromfileedit(Sender:Tobject;Adata:string);
+begin
+ readMapfilesAndFillCombos;
+
+end;
+procedure tform1.readMapfilesAndFillCombos;
+begin
+
+    loadfuncMapfile(ExtractFilePath(ParamStr(0))+'inputstatemap','state',buttonStateMaplist);
     loadfuncMapfile(ExtractFilePath(ParamStr(0))+'functionstatemap','state',functionStateMaplist);
     loadfuncMapfile(ExtractFilePath(ParamStr(0))+'inputmap','buttons',buttonmaplist);
     loadfuncMapfile(ExtractFilePath(ParamStr(0))+'functionmap','functions',functionmaplist);
-    fillTimeCombo;
-fillCombo(Combo_function_Name,functionmaplist);
-fillCombo(combo_inpstate,buttonStateMaplist);
-fillCombo(combo_inpbutton,buttonmaplist);
-fillCombo(combo_outpstate1,functionStateMaplist);
 
+fillCombo(Combo_function_Name,functionmaplist,'name');
+fillCombo(combo_inpstate,buttonStateMaplist,'name');
+fillCombo(combo_inpbutton,buttonmaplist,'name');
+fillCombo(combo_outpstate1,functionStateMaplist,'name');
+if Formmapfileeditor.Radiofunctionmap.Checked then
+begin
+fillCombo(Formmapfileeditor.ComboBox1,functionmaplist,'name');
+Formmapfileeditor.currentfile:=ExtractFilePath(ParamStr(0))+'functionmap';
+   Formmapfileeditor.addMaplistToCombo(Formmapfileeditor.ComboValOne,functionmaplist,'bus');
+   Formmapfileeditor.addMaplistToCombo(Formmapfileeditor.ComboValtwo,functionmaplist,'module');
+   Formmapfileeditor.addMaplistToCombo(Formmapfileeditor.ComboValthree,functionmaplist,'port');
 
 end;
-procedure tform1.fillCombo(combo:TComboBox;list:Tmaplist);
+if Formmapfileeditor.Radioinputmap.Checked then begin
+  fillCombo(Formmapfileeditor.ComboBox1,buttonmaplist,'name');
+  Formmapfileeditor.currentfile:=ExtractFilePath(ParamStr(0))+'inputmap';
+  Formmapfileeditor.addMaplistToCombo(Formmapfileeditor.ComboValOne,buttonmaplist,'bus');
+  Formmapfileeditor.addMaplistToCombo(Formmapfileeditor.ComboValtwo,buttonmaplist,'module');
+  Formmapfileeditor.addMaplistToCombo(Formmapfileeditor.ComboValthree,buttonmaplist,'port');
+end;
+if Formmapfileeditor.Radiofunctionstate.Checked then begin
+  fillCombo(Formmapfileeditor.ComboBox1,functionstatemaplist,'name');
+  Formmapfileeditor.currentfile:=ExtractFilePath(ParamStr(0))+'functionstatemap';
+  Formmapfileeditor.addMaplistToCombo(Formmapfileeditor.ComboValOne,functionStateMaplist,'state');
+
+end;
+if Formmapfileeditor.Radioinputstate.Checked then begin
+  fillCombo(Formmapfileeditor.ComboBox1,buttonStateMaplist,'name');
+  Formmapfileeditor.currentfile:=ExtractFilePath(ParamStr(0))+'inputstatemap';
+    Formmapfileeditor.addMaplistToCombo(Formmapfileeditor.ComboValOne,buttonStateMaplist,'state');
+
+end;
+Formmapfileeditor.Memo1.Lines.LoadFromFile(Formmapfileeditor.currentfile);
+end;
+
+procedure tform1.fillCombo(combo:TComboBox;list:Tmaplist;Field:string);
 var
   i:integer;
 begin
 combo.Clear;
      for i := 0 to length(list)-1 do
      begin
+       if Field='name'then
        combo.AddItem(list[i].name,nil);
+       if Field='bus'then
+       combo.AddItem(list[i].bus,nil);
+       if Field='module'then
+       combo.AddItem(list[i].module,nil);
+       if Field='port'then
+       combo.AddItem(list[i].port,nil);
+       if Field='state'then
+       combo.AddItem(list[i].state,nil);
      end;
 
 end;
@@ -564,7 +650,7 @@ end;
 
 procedure TForm1.MenuItem3Click(Sender: TObject);
 begin
-  SaveFile(true);
+
 end;
 
 procedure TForm1.MenuItem4Click(Sender: TObject);
@@ -673,8 +759,7 @@ end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
 begin
-  loadfile;
-  refreshdata;
+
   //if TreeView1.items.Count>0 then
    // TreeView1.Selected. :=TreeView1.Items[0];
 end;
@@ -762,7 +847,8 @@ epos := Pos('#', serialdata);
       FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
       FrmSerialMonitor.Memo1.SelLength:=0;
       FrmSerialMonitor.Memo1.SetFocus;
-
+      if pos('mapbutton',trim(Copy(serialdata, spos + 1, epos-2))) > 0 then
+      identifyTriggerInput(trim(Copy(serialdata, spos + 1, epos-2)));
        serialdata := Copy(serialdata, epos + 1, Length(serialdata));
     //  end;
 
@@ -773,6 +859,19 @@ epos := Pos('#', serialdata);
 
 
 
+end;
+procedure Tform1.identifyTriggerInput(Adata:string);
+var
+strlst:tstringlist;
+begin
+strlst:=tstringlist.Create;
+strlst.Delimiter:=':';
+strlst.StrictDelimiter:=true;
+strlst.DelimitedText:=Adata;
+ Formmapfileeditor.ComboValOne.Text:=strlst[1];
+ Formmapfileeditor.ComboValtwo.Text:=strlst[2];
+ Formmapfileeditor.ComboValthree.Text:=strlst[3];
+ combo_inpbutton.Text:=getNameFromMaplist(strlst[1],strlst[2],strlst[3],buttonmaplist);
 end;
 
 procedure TForm1.TreeView1Change(Sender: TObject; Node: TTreeNode);

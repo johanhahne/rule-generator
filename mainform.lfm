@@ -1,14 +1,15 @@
 object Form1: TForm1
-  Left = 2550
-  Height = 701
-  Top = 136
-  Width = 891
+  Left = 2630
+  Height = 698
+  Top = 179
+  Width = 974
+  BorderStyle = bsNone
   Caption = 'Rule Creator'
-  ClientHeight = 678
-  ClientWidth = 891
-  Menu = MainMenu1
+  ClientHeight = 698
+  ClientWidth = 974
   OnCreate = FormCreate
   LCLVersion = '1.6.0.4'
+  Visible = True
   object Memo1: TMemo
     Left = 764
     Height = 33
@@ -20,12 +21,12 @@ object Form1: TForm1
     TabOrder = 0
   end
   object Panel1: TPanel
-    Left = 279
-    Height = 678
-    Top = 0
+    Left = 362
+    Height = 594
+    Top = 104
     Width = 612
     Align = alRight
-    ClientHeight = 678
+    ClientHeight = 594
     ClientWidth = 612
     TabOrder = 1
     OnClick = Panel1Click
@@ -40,11 +41,10 @@ object Form1: TForm1
       Text = 'rule1'
     end
     object Button2: TButton
-      Left = 32
+      Left = 33
       Height = 25
-      Top = 498
+      Top = 488
       Width = 116
-      Anchors = [akLeft, akBottom]
       Caption = 'Save as new rule'
       OnClick = Button2Click
       TabOrder = 1
@@ -52,9 +52,8 @@ object Form1: TForm1
     object Button3: TButton
       Left = 33
       Height = 25
-      Top = 416
+      Top = 403
       Width = 115
-      Anchors = [akLeft, akBottom]
       Caption = 'Save current rule'
       OnClick = Button3Click
       TabOrder = 2
@@ -71,7 +70,7 @@ object Form1: TForm1
       TabOrder = 3
       object combo_inpstate: TComboBox
         Left = 272
-        Height = 29
+        Height = 25
         Top = 40
         Width = 100
         ItemHeight = 0
@@ -160,9 +159,9 @@ object Form1: TForm1
       end
     end
     object Panel4: TPanel
-      Left = 16
+      Left = 576
       Height = 104
-      Top = 496
+      Top = 456
       Width = 489
       ClientHeight = 104
       ClientWidth = 489
@@ -305,51 +304,23 @@ object Form1: TForm1
       ParentColor = False
     end
     object Button4: TButton
-      Left = 31
+      Left = 32
       Height = 25
-      Top = 472
-      Width = 116
-      Anchors = [akLeft, akBottom]
+      Top = 459
+      Width = 115
       Caption = 'Delete rule'
       OnClick = Button4Click
       TabOrder = 6
     end
-    object btnconnectserial: TButton
-      Left = 382
-      Height = 25
-      Top = 16
-      Width = 123
-      Caption = 'Connect'
-      OnClick = btnconnectserialClick
-      TabOrder = 7
-    end
-    object Button1: TButton
-      Left = 512
-      Height = 25
-      Top = 16
-      Width = 75
-      Caption = 'Print Rulefile'
-      OnClick = Button1Click
-      TabOrder = 8
-    end
-    object Button5: TButton
-      Left = 512
-      Height = 25
-      Top = 48
-      Width = 75
-      Caption = 'toggle dbg'
-      OnClick = Button5Click
-      TabOrder = 9
-    end
     object Memo2: TMemo
-      Left = 16
-      Height = 90
-      Top = 568
-      Width = 542
+      Left = 8
+      Height = 33
+      Top = 527
+      Width = 584
       Lines.Strings = (
         'Memo2'
       )
-      TabOrder = 10
+      TabOrder = 7
     end
     object Panel6: TPanel
       Left = 8
@@ -360,10 +331,10 @@ object Form1: TForm1
       ClientWidth = 489
       Color = clSilver
       ParentColor = False
-      TabOrder = 11
+      TabOrder = 8
       object combo_outpstate1: TComboBox
         Left = 360
-        Height = 29
+        Height = 25
         Top = 24
         Width = 100
         ItemHeight = 0
@@ -397,7 +368,7 @@ object Form1: TForm1
       end
       object Combo_function_Name: TComboBox
         Left = 8
-        Height = 29
+        Height = 25
         Top = 24
         Width = 340
         ItemHeight = 0
@@ -470,15 +441,15 @@ object Form1: TForm1
       end
     end
     object Panel5: TPanel
-      Left = 17
+      Left = 552
       Height = 112
-      Top = 565
+      Top = 432
       Width = 488
       ClientHeight = 112
       ClientWidth = 488
       Color = clSilver
       ParentColor = False
-      TabOrder = 12
+      TabOrder = 9
       Visible = False
       object combo_inpstate1: TComboBox
         Left = 240
@@ -590,38 +561,37 @@ object Form1: TForm1
     object Button6: TButton
       Left = 33
       Height = 25
-      Top = 444
+      Top = 431
       Width = 115
-      Anchors = [akLeft, akBottom]
       Caption = 'Save as new rule'
       OnClick = Button6Click
-      TabOrder = 13
+      TabOrder = 10
     end
     object btnTestRule: TButton
       Left = 421
       Height = 25
-      Top = 416
+      Top = 403
       Width = 75
       Caption = 'Test Rule'
       OnClick = btnTestRuleClick
-      TabOrder = 14
+      TabOrder = 11
     end
   end
   object Panel2: TPanel
     Left = 0
-    Height = 678
-    Top = 0
-    Width = 274
+    Height = 594
+    Top = 104
+    Width = 357
     Align = alClient
     Caption = 'Panel2'
-    ClientHeight = 678
-    ClientWidth = 274
+    ClientHeight = 594
+    ClientWidth = 357
     TabOrder = 2
     object TreeView1: TTreeView
       Left = 1
-      Height = 676
+      Height = 592
       Top = 1
-      Width = 272
+      Width = 355
       Align = alClient
       DragMode = dmAutomatic
       TabOrder = 0
@@ -631,9 +601,9 @@ object Form1: TForm1
     end
   end
   object Splitter1: TSplitter
-    Left = 274
-    Height = 678
-    Top = 0
+    Left = 357
+    Height = 594
+    Top = 104
     Width = 5
     Align = alRight
     ResizeAnchor = akRight
@@ -654,73 +624,111 @@ object Form1: TForm1
     Caption = 'Output Port'
     ParentColor = False
   end
-  object OpenDialog1: TOpenDialog
-    DefaultExt = '.rules'
-    Filter = 'Rule files|*.rules'
-    Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
-    left = 928
-    top = 32
-  end
-  object MainMenu1: TMainMenu
-    left = 576
-    top = 16
-    object MenuItem1: TMenuItem
-      Caption = 'File'
-      object MenuItem5: TMenuItem
-        Caption = 'New'
-        OnClick = MenuItem5Click
-      end
-      object MenuItem2: TMenuItem
-        Caption = 'Open'
-        OnClick = MenuItem2Click
-      end
-      object MenuItem4: TMenuItem
-        Caption = 'Save'
-        OnClick = MenuItem4Click
-      end
-      object MenuItem3: TMenuItem
-        Caption = 'Save As'
-        OnClick = MenuItem3Click
-      end
+  object Panel7: TPanel
+    Left = 0
+    Height = 104
+    Top = 0
+    Width = 974
+    Align = alTop
+    ClientHeight = 104
+    ClientWidth = 974
+    TabOrder = 4
+    object Button1: TButton
+      Left = 880
+      Height = 25
+      Top = 40
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Print Rulefile'
+      OnClick = Button1Click
+      TabOrder = 0
     end
-    object MenuItem6: TMenuItem
-      Caption = 'Export'
-      object MenuItem7: TMenuItem
-        Caption = 'To file'
-        OnClick = MenuItem7Click
-      end
-      object MenuItem8: TMenuItem
-        Caption = 'To arduino'
-        OnClick = MenuItem8Click
-      end
+    object btnconnectserial: TButton
+      Left = 728
+      Height = 25
+      Top = 8
+      Width = 128
+      Anchors = [akTop, akRight]
+      Caption = 'Connect'
+      OnClick = btnconnectserialClick
+      TabOrder = 1
     end
-    object MenuItem10: TMenuItem
-      Caption = 'View'
-      object MenuItem11: TMenuItem
-        Caption = 'Serial Monitor'
-        OnClick = MenuItem11Click
-      end
+    object Button5: TButton
+      Left = 880
+      Height = 25
+      Top = 8
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'toggle dbg'
+      OnClick = Button5Click
+      TabOrder = 2
+    end
+    object Button7: TButton
+      Left = 8
+      Height = 25
+      Top = 8
+      Width = 96
+      Caption = 'Open'
+      OnClick = Button7Click
+      TabOrder = 3
+    end
+    object Button8: TButton
+      Left = 8
+      Height = 25
+      Top = 40
+      Width = 96
+      Caption = 'Save'
+      OnClick = Button8Click
+      TabOrder = 4
+    end
+    object Button9: TButton
+      Left = 8
+      Height = 25
+      Top = 72
+      Width = 96
+      Caption = 'Save AS'
+      OnClick = Button9Click
+      TabOrder = 5
+    end
+    object Button10: TButton
+      Left = 728
+      Height = 25
+      Top = 40
+      Width = 131
+      Anchors = [akTop, akRight]
+      Caption = 'Serial monitor'
+      OnClick = Button10Click
+      TabOrder = 6
+    end
+    object Button11: TButton
+      Left = 728
+      Height = 25
+      Top = 72
+      Width = 131
+      Anchors = [akTop, akRight]
+      Caption = 'Mapping editor'
+      OnClick = Button11Click
+      TabOrder = 7
     end
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.rules'
     Filter = 'Rule files|*.rules'
     Options = [ofCreatePrompt, ofEnableSizing, ofViewDetail]
-    left = 976
-    top = 32
+    left = 776
+    top = 112
+  end
+  object OpenDialog1: TOpenDialog
+    DefaultExt = '.rules'
+    Filter = 'Rule files|*.rules'
+    Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    left = 840
+    top = 120
   end
   object SaveDialog2: TSaveDialog
     DefaultExt = '.r'
     Filter = 'Arduino Rule files|*.r'
-    left = 616
-    top = 16
-  end
-  object MainMenu2: TMainMenu
-    left = 826
-    top = 122
-  end
-  object MainMenu3: TMainMenu
-    left = 829
-    top = 260
+    left = 872
+    top = 192
   end
 end
