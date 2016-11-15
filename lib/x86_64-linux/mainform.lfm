@@ -1,12 +1,12 @@
 object Form1: TForm1
-  Left = 2630
-  Height = 698
-  Top = 179
-  Width = 974
+  Left = 565
+  Height = 727
+  Top = 164
+  Width = 1063
   BorderStyle = bsNone
   Caption = 'Rule Creator'
-  ClientHeight = 698
-  ClientWidth = 974
+  ClientHeight = 727
+  ClientWidth = 1063
   OnCreate = FormCreate
   LCLVersion = '1.6.0.4'
   Visible = True
@@ -21,12 +21,12 @@ object Form1: TForm1
     TabOrder = 0
   end
   object Panel1: TPanel
-    Left = 362
-    Height = 594
-    Top = 104
+    Left = 451
+    Height = 591
+    Top = 136
     Width = 612
     Align = alRight
-    ClientHeight = 594
+    ClientHeight = 591
     ClientWidth = 612
     TabOrder = 1
     OnClick = Panel1Click
@@ -317,9 +317,6 @@ object Form1: TForm1
       Height = 33
       Top = 527
       Width = 584
-      Lines.Strings = (
-        'Memo2'
-      )
       TabOrder = 7
     end
     object Panel6: TPanel
@@ -384,47 +381,37 @@ object Form1: TForm1
         Text = '1'
       end
       object Combo_frmhr: TComboBox
-        Left = 136
-        Height = 29
-        Top = 64
-        Width = 50
-        ItemHeight = 0
-        OnChange = compChange
-        Style = csDropDownList
-        TabOrder = 2
-      end
-      object Combo_frmmin: TComboBox
-        Left = 200
-        Height = 29
-        Top = 64
-        Width = 50
-        ItemHeight = 0
-        OnChange = compChange
-        Style = csDropDownList
-        TabOrder = 3
-      end
-      object Combo_tohr: TComboBox
-        Left = 280
-        Height = 29
-        Top = 64
-        Width = 50
-        ItemHeight = 0
-        OnChange = compChange
-        Style = csDropDownList
-        TabOrder = 4
-      end
-      object Combo_tomin: TComboBox
-        Left = 344
+        Left = 144
         Height = 29
         Top = 64
         Width = 56
         ItemHeight = 0
         OnChange = compChange
         Style = csDropDownList
-        TabOrder = 5
+        TabOrder = 2
+      end
+      object Combo_frmmin: TComboBox
+        Left = 208
+        Height = 29
+        Top = 64
+        Width = 56
+        ItemHeight = 0
+        OnChange = compChange
+        Style = csDropDownList
+        TabOrder = 3
+      end
+      object Combo_tomin: TComboBox
+        Left = 352
+        Height = 29
+        Top = 64
+        Width = 52
+        ItemHeight = 0
+        OnChange = compChange
+        Style = csDropDownList
+        TabOrder = 4
       end
       object Label10: TLabel
-        Left = 264
+        Left = 272
         Height = 17
         Top = 72
         Width = 4
@@ -438,6 +425,16 @@ object Form1: TForm1
         Width = 111
         Caption = 'Rule active between'
         ParentColor = False
+      end
+      object combo_tohr: TComboBox
+        Left = 288
+        Height = 29
+        Top = 64
+        Width = 56
+        ItemHeight = 0
+        OnChange = compChange
+        Style = csDropDownList
+        TabOrder = 5
       end
     end
     object Panel5: TPanel
@@ -567,31 +564,22 @@ object Form1: TForm1
       OnClick = Button6Click
       TabOrder = 10
     end
-    object btnTestRule: TButton
-      Left = 421
-      Height = 25
-      Top = 403
-      Width = 75
-      Caption = 'Test Rule'
-      OnClick = btnTestRuleClick
-      TabOrder = 11
-    end
   end
   object Panel2: TPanel
     Left = 0
-    Height = 594
-    Top = 104
-    Width = 357
+    Height = 591
+    Top = 136
+    Width = 446
     Align = alClient
     Caption = 'Panel2'
-    ClientHeight = 594
-    ClientWidth = 357
+    ClientHeight = 591
+    ClientWidth = 446
     TabOrder = 2
     object TreeView1: TTreeView
       Left = 1
-      Height = 592
+      Height = 589
       Top = 1
-      Width = 355
+      Width = 444
       Align = alClient
       DragMode = dmAutomatic
       TabOrder = 0
@@ -601,9 +589,9 @@ object Form1: TForm1
     end
   end
   object Splitter1: TSplitter
-    Left = 357
-    Height = 594
-    Top = 104
+    Left = 446
+    Height = 591
+    Top = 136
     Width = 5
     Align = alRight
     ResizeAnchor = akRight
@@ -626,15 +614,15 @@ object Form1: TForm1
   end
   object Panel7: TPanel
     Left = 0
-    Height = 104
+    Height = 136
     Top = 0
-    Width = 974
+    Width = 1063
     Align = alTop
-    ClientHeight = 104
-    ClientWidth = 974
+    ClientHeight = 136
+    ClientWidth = 1063
     TabOrder = 4
     object Button1: TButton
-      Left = 880
+      Left = 969
       Height = 25
       Top = 40
       Width = 75
@@ -643,72 +631,137 @@ object Form1: TForm1
       OnClick = Button1Click
       TabOrder = 0
     end
-    object btnconnectserial: TButton
-      Left = 728
-      Height = 25
-      Top = 8
-      Width = 128
-      Anchors = [akTop, akRight]
-      Caption = 'Connect'
-      OnClick = btnconnectserialClick
-      TabOrder = 1
-    end
     object Button5: TButton
-      Left = 880
+      Left = 969
       Height = 25
       Top = 8
       Width = 75
       Anchors = [akTop, akRight]
       Caption = 'toggle dbg'
       OnClick = Button5Click
+      TabOrder = 1
+    end
+    object Button12: TButton
+      Left = 969
+      Height = 25
+      Top = 72
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Export rules'
+      OnClick = MenuItem8Click
       TabOrder = 2
     end
-    object Button7: TButton
-      Left = 8
+    object Panel8: TPanel
+      Left = 16
+      Height = 120
+      Top = 8
+      Width = 112
+      BorderStyle = bsSingle
+      ClientHeight = 120
+      ClientWidth = 112
+      TabOrder = 3
+      object Button7: TButton
+        Left = 8
+        Height = 25
+        Top = 35
+        Width = 96
+        Caption = 'Open'
+        OnClick = Button7Click
+        TabOrder = 0
+      end
+      object Button8: TButton
+        Left = 8
+        Height = 25
+        Top = 61
+        Width = 96
+        Caption = 'Save'
+        OnClick = Button8Click
+        TabOrder = 1
+      end
+      object Button9: TButton
+        Left = 8
+        Height = 25
+        Top = 87
+        Width = 96
+        Caption = 'Save AS'
+        OnClick = Button9Click
+        TabOrder = 2
+      end
+      object Label2: TLabel
+        Left = 32
+        Height = 17
+        Top = 8
+        Width = 44
+        Caption = 'Rule file'
+        ParentColor = False
+      end
+    end
+    object Panel9: TPanel
+      Left = 136
+      Height = 120
+      Top = 8
+      Width = 120
+      BorderStyle = bsSingle
+      ClientHeight = 120
+      ClientWidth = 120
+      TabOrder = 4
+      object btnconnectserial: TButton
+        Left = 8
+        Height = 25
+        Top = 35
+        Width = 104
+        Anchors = []
+        Caption = 'Connect'
+        OnClick = btnconnectserialClick
+        TabOrder = 0
+      end
+      object Button10: TButton
+        Left = 8
+        Height = 25
+        Top = 61
+        Width = 104
+        Anchors = []
+        Caption = 'Serial monitor'
+        OnClick = Button10Click
+        TabOrder = 1
+      end
+      object Button11: TButton
+        Left = 8
+        Height = 25
+        Top = 87
+        Width = 104
+        Anchors = []
+        Caption = 'Mapping editor'
+        OnClick = Button11Click
+        TabOrder = 2
+      end
+      object Label19: TLabel
+        Left = 32
+        Height = 17
+        Top = 8
+        Width = 53
+        Caption = 'Functions'
+        ParentColor = False
+      end
+    end
+    object Button13: TButton
+      Left = 888
       Height = 25
       Top = 8
-      Width = 96
-      Caption = 'Open'
-      OnClick = Button7Click
-      TabOrder = 3
-    end
-    object Button8: TButton
-      Left = 8
-      Height = 25
-      Top = 40
-      Width = 96
-      Caption = 'Save'
-      OnClick = Button8Click
-      TabOrder = 4
-    end
-    object Button9: TButton
-      Left = 8
-      Height = 25
-      Top = 72
-      Width = 96
-      Caption = 'Save AS'
-      OnClick = Button9Click
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Sync time'
       TabOrder = 5
     end
-    object Button10: TButton
-      Left = 728
+    object btnTestRule: TButton
+      Left = 888
       Height = 25
       Top = 40
-      Width = 131
+      Width = 75
       Anchors = [akTop, akRight]
-      Caption = 'Serial monitor'
-      OnClick = Button10Click
+      Caption = 'Test Rule'
+      OnClick = btnTestRuleClick
       TabOrder = 6
-    end
-    object Button11: TButton
-      Left = 728
-      Height = 25
-      Top = 72
-      Width = 131
-      Anchors = [akTop, akRight]
-      Caption = 'Mapping editor'
-      OnClick = Button11Click
-      TabOrder = 7
     end
   end
   object SaveDialog1: TSaveDialog

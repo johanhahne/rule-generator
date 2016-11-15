@@ -35,15 +35,17 @@ type
 
   TForm1 = class(TForm)
     btnconnectserial: TButton;
+    btnTestRule: TButton;
     Button1: TButton;
     Button10: TButton;
     Button11: TButton;
+    Button12: TButton;
+    Button13: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
-    btnTestRule: TButton;
     Button7: TButton;
     Button8: TButton;
     Button9: TButton;
@@ -64,8 +66,8 @@ type
     Combo_function_Name: TComboBox;
     combo_rulename: TComboBox;
     combo_rulegroup: TComboBox;
-    Combo_tohr: TComboBox;
     Combo_tomin: TComboBox;
+    combo_tohr: TComboBox;
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
@@ -76,6 +78,8 @@ type
     Label16: TLabel;
     Label17: TLabel;
     Label18: TLabel;
+    Label19: TLabel;
+    Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -93,6 +97,8 @@ type
     Panel5: TPanel;
     Panel6: TPanel;
     Panel7: TPanel;
+    Panel8: TPanel;
+    Panel9: TPanel;
     SaveDialog1: TSaveDialog;
     SaveDialog2: TSaveDialog;
     Splitter1: TSplitter;
@@ -141,6 +147,7 @@ type
     procedure fillCombo(combo:TComboBox;list:Tmaplist;Field:string);
     procedure fillTimeCombo;
     function GenArduinoRule(var rulerec: TruleRec): string;
+    function GenArduinoTestRule(var rulerec: TruleRec): string;
     function getNameFromMaplist(bus,module, port: string; list: Tmaplist): string;
     function getTreenode(nodename: string;treeview:ttreeview): ttreenode;
 
@@ -233,7 +240,7 @@ begin
     begin
        if rulelist[i].guid = rulerecpointer(TreeView1.Selected.Data)^.guid then
        begin
-       connectionsandstuff.SdpoSerial1.WriteData('!'+ GenArduinoRule(rulelist[i])+'#'+#10);
+       connectionsandstuff.SdpoSerial1.WriteData('!1,'+ GenArduinotestRule(rulelist[i])+'#'+#10);
        break;
        end;
     end;
@@ -522,7 +529,7 @@ begin
   Combo_tomin.ItemIndex:=59;
   Combo_frmmin.ItemIndex:=0;
   Combo_frmhr.ItemIndex:=0;
-  Combo_tohr.ItemIndex:=59;
+  Combo_tohr.ItemIndex:=23;
 end;
 
 procedure TForm1.loadfile;
@@ -1070,6 +1077,13 @@ begin
    +','+ rulerec.outpbus +','+ rulerec.outpmodule +','+ rulerec.outpport +','+ rulerec.outpstate +','+ rulerec.hrstart +','+ rulerec.minstart +','+ rulerec.hrend
    +','+ rulerec.minend +','+ rulerec.lpressec;
 end;
+
+function tform1.GenArduinoTestRule(var rulerec:TruleRec):string;
+begin
+   result:= rulerec.outpbus +','+ rulerec.outpmodule +','+ rulerec.outpport +','+ rulerec.outpstate;
+end;
+
+
 
 procedure TForm1.SendSerialData(Header, data: string);
 begin

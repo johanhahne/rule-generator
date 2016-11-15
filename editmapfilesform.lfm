@@ -1,9 +1,9 @@
 object Formmapfileeditor: TFormmapfileeditor
-  Left = 2419
+  Left = 496
   Height = 787
-  Top = 350
+  Top = 362
   Width = 1319
-  Caption = 'Formmapfileeditor'
+  Caption = 'Mapfile Editor'
   ClientHeight = 787
   ClientWidth = 1319
   FormStyle = fsMDIChild

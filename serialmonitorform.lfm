@@ -1,7 +1,7 @@
 object FrmSerialMonitor: TFrmSerialMonitor
-  Left = 3030
+  Left = 437
   Height = 608
-  Top = 191
+  Top = 278
   Width = 783
   Caption = 'Serial Monitor'
   ClientHeight = 608

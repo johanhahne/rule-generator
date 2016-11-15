@@ -1,7 +1,7 @@
 object frmSerialSettings: TfrmSerialSettings
-  Left = 3452
+  Left = 1470
   Height = 174
-  Top = 179
+  Top = 185
   Width = 247
   BorderStyle = bsSingle
   Caption = 'Serial Settings'
