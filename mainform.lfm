@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 565
+  Left = 564
   Height = 727
-  Top = 164
+  Top = 127
   Width = 1063
   BorderStyle = bsNone
   Caption = 'Rule Creator'
@@ -657,8 +657,8 @@ object Form1: TForm1
       Top = 8
       Width = 112
       BorderStyle = bsSingle
-      ClientHeight = 120
-      ClientWidth = 112
+      ClientHeight = 118
+      ClientWidth = 110
       TabOrder = 3
       object Button7: TButton
         Left = 8
@@ -702,13 +702,13 @@ object Form1: TForm1
       Top = 8
       Width = 120
       BorderStyle = bsSingle
-      ClientHeight = 120
-      ClientWidth = 120
+      ClientHeight = 118
+      ClientWidth = 118
       TabOrder = 4
       object btnconnectserial: TButton
-        Left = 8
+        Left = 7
         Height = 25
-        Top = 35
+        Top = 34
         Width = 104
         Anchors = []
         Caption = 'Connect'
@@ -716,9 +716,9 @@ object Form1: TForm1
         TabOrder = 0
       end
       object Button10: TButton
-        Left = 8
+        Left = 7
         Height = 25
-        Top = 61
+        Top = 60
         Width = 104
         Anchors = []
         Caption = 'Serial monitor'
@@ -726,9 +726,9 @@ object Form1: TForm1
         TabOrder = 1
       end
       object Button11: TButton
-        Left = 8
+        Left = 7
         Height = 25
-        Top = 87
+        Top = 85
         Width = 104
         Anchors = []
         Caption = 'Mapping editor'
@@ -751,6 +751,7 @@ object Form1: TForm1
       Width = 75
       Anchors = [akTop, akRight]
       Caption = 'Sync time'
+      OnClick = Button13Click
       TabOrder = 5
     end
     object btnTestRule: TButton

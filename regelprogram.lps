@@ -20,14 +20,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mainForm"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="220"/>
-        <CursorPos Y="241"/>
+        <TopLine Value="260"/>
+        <CursorPos X="53" Y="260"/>
         <UsageCount Value="205"/>
         <Bookmarks Count="4">
-          <Item0 X="2" Y="370" ID="3"/>
-          <Item1 X="22" Y="485" ID="2"/>
-          <Item2 X="11" Y="877" ID="4"/>
-          <Item3 X="16" Y="242" ID="1"/>
+          <Item0 X="2" Y="376" ID="3"/>
+          <Item1 X="22" Y="491" ID="2"/>
+          <Item2 X="11" Y="883" ID="4"/>
+          <Item3 X="16" Y="243" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -75,7 +75,7 @@
         <ResourceBaseClass Value="DataModule"/>
         <EditorIndex Value="14"/>
         <CursorPos X="36" Y="16"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="182"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit5>
@@ -88,7 +88,7 @@
         <EditorIndex Value="13"/>
         <TopLine Value="67"/>
         <CursorPos X="88" Y="116"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="132"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit6>
@@ -100,14 +100,14 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
         <CursorPos Y="16"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="105"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="/usr/share/lazarus/1.6/docs/xml/lcl/comctrls/ttreenode_data.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="14" Y="25"/>
-        <UsageCount Value="72"/>
+        <UsageCount Value="64"/>
       </Unit8>
       <Unit9>
         <Filename Value="/usr/share/lazarus/1.6/lcl/include/treeview.inc"/>
@@ -131,7 +131,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="47"/>
         <CursorPos Y="60"/>
-        <UsageCount Value="55"/>
+        <UsageCount Value="47"/>
       </Unit11>
       <Unit12>
         <Filename Value="/usr/share/lazarus/1.6/components/lazutils/fileutil.pas"/>
@@ -139,7 +139,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="230"/>
         <CursorPos X="11" Y="256"/>
-        <UsageCount Value="53"/>
+        <UsageCount Value="45"/>
       </Unit12>
       <Unit13>
         <Filename Value="/usr/share/lazarus/1.6/lcl/stdctrls.pp"/>
@@ -181,7 +181,7 @@
         <EditorIndex Value="3"/>
         <TopLine Value="255"/>
         <CursorPos X="26" Y="261"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="92"/>
         <Loaded Value="True"/>
       </Unit17>
       <Unit18>
@@ -189,26 +189,26 @@
         <EditorIndex Value="4"/>
         <TopLine Value="1225"/>
         <CursorPos X="3" Y="1232"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="92"/>
         <Loaded Value="True"/>
       </Unit18>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="mainform.pas"/>
-        <Caret Line="249" Column="67" TopLine="241"/>
+        <Caret Line="239" Column="54" TopLine="217"/>
       </Position1>
       <Position2>
         <Filename Value="mainform.pas"/>
-        <Caret Line="236" Column="16" TopLine="229"/>
+        <Caret Line="240" Column="54" TopLine="218"/>
       </Position2>
       <Position3>
         <Filename Value="mainform.pas"/>
-        <Caret Line="1076" Column="21" TopLine="1062"/>
+        <Caret Line="239" Column="54" TopLine="217"/>
       </Position3>
       <Position4>
         <Filename Value="mainform.pas"/>
-        <Caret Line="238" Column="54" TopLine="216"/>
+        <Caret Line="240" Column="54" TopLine="218"/>
       </Position4>
       <Position5>
         <Filename Value="mainform.pas"/>
@@ -216,11 +216,11 @@
       </Position5>
       <Position6>
         <Filename Value="mainform.pas"/>
-        <Caret Line="240" Column="54" TopLine="218"/>
+        <Caret Line="238" Column="54" TopLine="216"/>
       </Position6>
       <Position7>
         <Filename Value="mainform.pas"/>
-        <Caret Line="239" Column="54" TopLine="217"/>
+        <Caret Line="237" Column="54" TopLine="215"/>
       </Position7>
       <Position8>
         <Filename Value="mainform.pas"/>
@@ -228,15 +228,15 @@
       </Position8>
       <Position9>
         <Filename Value="mainform.pas"/>
-        <Caret Line="239" Column="54" TopLine="217"/>
+        <Caret Line="241" Column="54" TopLine="219"/>
       </Position9>
       <Position10>
         <Filename Value="mainform.pas"/>
-        <Caret Line="238" Column="54" TopLine="216"/>
+        <Caret Line="242" Column="54" TopLine="220"/>
       </Position10>
       <Position11>
         <Filename Value="mainform.pas"/>
-        <Caret Line="237" Column="54" TopLine="215"/>
+        <Caret Line="241" Column="54" TopLine="219"/>
       </Position11>
       <Position12>
         <Filename Value="mainform.pas"/>
@@ -244,7 +244,7 @@
       </Position12>
       <Position13>
         <Filename Value="mainform.pas"/>
-        <Caret Line="241" Column="54" TopLine="219"/>
+        <Caret Line="239" Column="54" TopLine="217"/>
       </Position13>
       <Position14>
         <Filename Value="mainform.pas"/>
@@ -256,11 +256,11 @@
       </Position15>
       <Position16>
         <Filename Value="mainform.pas"/>
-        <Caret Line="240" Column="54" TopLine="218"/>
+        <Caret Line="242" Column="54" TopLine="220"/>
       </Position16>
       <Position17>
         <Filename Value="mainform.pas"/>
-        <Caret Line="239" Column="54" TopLine="217"/>
+        <Caret Line="241" Column="54" TopLine="219"/>
       </Position17>
       <Position18>
         <Filename Value="mainform.pas"/>
@@ -268,51 +268,51 @@
       </Position18>
       <Position19>
         <Filename Value="mainform.pas"/>
-        <Caret Line="241" Column="54" TopLine="219"/>
+        <Caret Line="503" Column="6" TopLine="482"/>
       </Position19>
       <Position20>
         <Filename Value="mainform.pas"/>
-        <Caret Line="242" Column="54" TopLine="220"/>
+        <Caret Line="502" Column="6" TopLine="481"/>
       </Position20>
       <Position21>
         <Filename Value="mainform.pas"/>
-        <Caret Line="241" Column="54" TopLine="219"/>
+        <Caret Line="503" Column="6" TopLine="482"/>
       </Position21>
       <Position22>
         <Filename Value="mainform.pas"/>
-        <Caret Line="242" Column="54" TopLine="220"/>
+        <Caret Line="532" Column="27" TopLine="502"/>
       </Position22>
       <Position23>
         <Filename Value="mainform.pas"/>
-        <Caret Line="503" Column="6" TopLine="482"/>
+        <Caret Line="241" TopLine="220"/>
       </Position23>
       <Position24>
         <Filename Value="mainform.pas"/>
-        <Caret Line="502" Column="6" TopLine="481"/>
+        <Caret Line="240" TopLine="219"/>
       </Position24>
       <Position25>
         <Filename Value="mainform.pas"/>
-        <Caret Line="503" Column="6" TopLine="482"/>
+        <Caret Line="239" TopLine="218"/>
       </Position25>
       <Position26>
         <Filename Value="mainform.pas"/>
-        <Caret Line="532" Column="27" TopLine="502"/>
+        <Caret Line="241" TopLine="220"/>
       </Position26>
       <Position27>
         <Filename Value="mainform.pas"/>
-        <Caret Line="241" TopLine="220"/>
+        <Caret Line="224" Column="90" TopLine="221"/>
       </Position27>
       <Position28>
         <Filename Value="mainform.pas"/>
-        <Caret Line="240" TopLine="219"/>
+        <Caret Line="225" Column="90" TopLine="222"/>
       </Position28>
       <Position29>
         <Filename Value="mainform.pas"/>
-        <Caret Line="239" TopLine="218"/>
+        <Caret Line="224" Column="90" TopLine="221"/>
       </Position29>
       <Position30>
         <Filename Value="mainform.pas"/>
-        <Caret Line="241" TopLine="220"/>
+        <Caret Line="225" Column="90" TopLine="222"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
@@ -323,21 +323,21 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="mainform.pas"/>
-        <Line Value="857"/>
+        <Line Value="863"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="mainform.pas"/>
-        <Line Value="853"/>
+        <Line Value="859"/>
       </Item2>
       <Item3>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="mainform.pas"/>
-        <Line Value="842"/>
+        <Line Value="848"/>
       </Item3>
     </BreakPoints>
     <Watches Count="3">
