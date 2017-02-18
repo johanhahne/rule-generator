@@ -176,12 +176,12 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="3" Y="23"/>
+        <CursorPos X="5" Y="15"/>
         <UsageCount Value="56"/>
         <Loaded Value="True"/>
       </Unit19>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="mainform.pas"/>
         <Caret Line="717" Column="56" TopLine="675"/>
@@ -298,10 +298,6 @@
         <Filename Value="functions.pas"/>
         <Caret Line="22" Column="6"/>
       </Position29>
-      <Position30>
-        <Filename Value="functions.pas"/>
-        <Caret Line="15" Column="5"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

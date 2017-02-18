@@ -7,9 +7,8 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, mainForm, sdposeriallaz, serialsettingsform, serialmonitorform, 
-unitconnectionsandstuff, editmapfilesform, mainmdiform
-  { you can add units after this };
+  Forms, sdflaz, mainForm, sdposeriallaz, serialsettingsform, serialmonitorform,
+  unitconnectionsandstuff, editmapfilesform, mainmdiform, functions;
 
 {$R *.res}
 

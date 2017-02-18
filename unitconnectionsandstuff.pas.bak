@@ -64,8 +64,8 @@ epos := Pos('#', serialdata);
 
     //  if (spos > 0) and (epos > 0) then
     //  begin
-    if  trim(Copy(serialdata, spos + 5, epos-(spos + 5))) <> '' then
-       if Assigned(FReceiveData) then FReceiveData(trim(Copy(serialdata, spos + 5, epos-(spos + 5))));
+    if  trim(Copy(serialdata, spos + 4, epos-(spos + 4))) <> '' then
+       if Assigned(FReceiveData) then FReceiveData(trim(Copy(serialdata, spos + 4, epos-(spos + 4))));
 
 
 
