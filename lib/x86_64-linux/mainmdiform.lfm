@@ -1,7 +1,7 @@
 object Form3: TForm3
-  Left = 329
+  Left = 429
   Height = 783
-  Top = 178
+  Top = 165
   Width = 1210
   Caption = 'Rule edit'
   OnCreate = FormCreate
