@@ -14,7 +14,7 @@ uses
     { TArduinoFile }
 
     TArduinoFile = Class
-          constructor create(filename:string;data:string);
+          constructor create(fname:string;data:string);
           destructor destroy;
   private
     { private declarations }
@@ -25,9 +25,9 @@ uses
       function locateindataset(returnfieldindex:integer;SFidx1:integer;searchstring1:string;SFidx2:integer;searchstring2:string) :String; overload;
       function locateindataset(returnfieldindex:integer;SFidx1:integer;searchstring1:string;SFidx2:integer;searchstring2:string;SFidx3:integer;searchstring3:string) :String; overload;
       function locateindataset(sfields: array of integer; sstrings: array of string): boolean; overload;
+
   var
       Filename:String;
-
       datasource:TDataSource;
       dataset:TSdfDataSet;
 
@@ -37,7 +37,7 @@ implementation
 
 { TArduinoFile }
 
-constructor TArduinoFile.create(filename: string;data:string);
+constructor TArduinoFile.create(fname: string;data:string);
 var
   aStringStream:TStringStream;
   d:string;
@@ -58,7 +58,7 @@ begin
      datasource.Enabled:=true;
      finally
      end;
-
+     filename:=fname;
 end;
 
 destructor TArduinoFile.destroy;
@@ -170,12 +170,13 @@ begin
        if foundfield then
        begin
        found:=true;
+
        break;
        end;
 
      dataset.Next;
      end;
-
+    Result:=found;
 end;
 
 

@@ -1,0 +1,223 @@
+object frmnewrule: Tfrmnewrule
+  Left = 5110
+  Height = 215
+  Top = 393
+  Width = 374
+  BorderStyle = bsSizeToolWin
+  Caption = 'New rule'
+  ClientHeight = 215
+  ClientWidth = 374
+  LCLVersion = '1.6.0.4'
+  object Button1: TButton
+    Left = 208
+    Height = 25
+    Top = 184
+    Width = 156
+    Caption = 'Save'
+    OnClick = Button1Click
+    TabOrder = 0
+  end
+  object Comboinput: TComboBox
+    Left = 8
+    Height = 34
+    Top = 32
+    Width = 192
+    ItemHeight = 0
+    TabOrder = 1
+    Text = 'Comboinput'
+  end
+  object Comboinputstate: TComboBox
+    Left = 208
+    Height = 34
+    Top = 88
+    Width = 156
+    ItemHeight = 0
+    TabOrder = 2
+    Text = 'Comboinputstate'
+  end
+  object Combofunction: TComboBox
+    Left = 8
+    Height = 34
+    Top = 88
+    Width = 192
+    ItemHeight = 0
+    TabOrder = 3
+    Text = 'Combofunction'
+  end
+  object ComboEmin: TComboBox
+    Left = 304
+    Height = 34
+    Top = 144
+    Width = 64
+    ItemHeight = 0
+    Items.Strings = (
+      '0'
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+      '6'
+      '7'
+      '8'
+      '9'
+      '10'
+    )
+    TabOrder = 4
+    Text = 'ComboEmin'
+  end
+  object ComboEhr: TComboBox
+    Left = 240
+    Height = 34
+    Top = 144
+    Width = 64
+    ItemHeight = 0
+    Items.Strings = (
+      '0'
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+      '6'
+      '7'
+      '8'
+      '9'
+      '10'
+    )
+    TabOrder = 5
+    Text = 'ComboEhr'
+  end
+  object ComboShr: TComboBox
+    Left = 96
+    Height = 34
+    Top = 144
+    Width = 64
+    ItemHeight = 0
+    Items.Strings = (
+      '0'
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+      '6'
+      '7'
+      '8'
+      '9'
+      '10'
+    )
+    TabOrder = 6
+    Text = 'ComboShr'
+  end
+  object Label4: TLabel
+    Left = 96
+    Height = 17
+    Top = 128
+    Width = 85
+    Caption = 'Active between'
+    ParentColor = False
+  end
+  object comboFuncState: TComboBox
+    Left = 208
+    Height = 34
+    Top = 32
+    Width = 156
+    ItemHeight = 0
+    TabOrder = 7
+    Text = 'comboFuncState'
+  end
+  object Label1: TLabel
+    Left = 208
+    Height = 17
+    Top = 72
+    Width = 29
+    Caption = 'State'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 11
+    Height = 17
+    Top = 128
+    Width = 58
+    Caption = 'Longpress'
+    ParentColor = False
+  end
+  object ComboLongPress: TComboBox
+    Left = 8
+    Height = 34
+    Top = 144
+    Width = 80
+    ItemHeight = 0
+    Items.Strings = (
+      '0'
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+      '6'
+      '7'
+      '8'
+      '9'
+      '10'
+    )
+    TabOrder = 8
+    Text = 'ComboLongPress'
+  end
+  object ComboSmin: TComboBox
+    Left = 168
+    Height = 34
+    Top = 144
+    Width = 64
+    ItemHeight = 0
+    Items.Strings = (
+      '0'
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+      '6'
+      '7'
+      '8'
+      '9'
+      '10'
+    )
+    TabOrder = 9
+    Text = 'ComboSmin'
+  end
+  object Label2: TLabel
+    Left = 208
+    Height = 17
+    Top = 16
+    Width = 29
+    Caption = 'State'
+    ParentColor = False
+  end
+  object Label5: TLabel
+    Left = 11
+    Height = 17
+    Top = 16
+    Width = 47
+    Caption = 'Function'
+    ParentColor = False
+  end
+  object Label6: TLabel
+    Left = 11
+    Height = 17
+    Top = 72
+    Width = 31
+    Caption = 'Event'
+    ParentColor = False
+  end
+  object Button2: TButton
+    Left = 8
+    Height = 25
+    Top = 184
+    Width = 156
+    Caption = 'Cancel'
+    OnClick = Button2Click
+    TabOrder = 10
+  end
+end

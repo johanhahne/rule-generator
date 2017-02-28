@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls,
   StdCtrls, Menus, ExtCtrls, DBGrids, ActnList, SdpoSerial, contnrs, simpleipc,
   serialsettingsform, serialmonitorform, db, SdfData, unitconnectionsandstuff,
-  editmapfilesform, mainmdiform, functions;
+  editmapfilesform, mainmdiform, functions,FormNewRule,fgl;
 
 type
 
@@ -31,31 +31,44 @@ type
   Trulelist = array of TruleRec;
 //  Tmaplist = array of TmapRec;
 
-
+ //   TArduinoRuleFileslist = specialize TfpgObjectList<TArduinoFile>;
 
   { TForm1 }
 
   TForm1 = class(TForm)
     btnconnectserial: TButton;
     btnTestRule: TButton;
+    ButNewRule: TButton;
     Button1: TButton;
     Button10: TButton;
     Button11: TButton;
     Button12: TButton;
     Button13: TButton;
     Button2: TButton;
+    Button3: TButton;
     Button5: TButton;
     Button7: TButton;
-    Button8: TButton;
     Button9: TButton;
-    ComboBox1: TComboBox;
-    ComboBox2: TComboBox;
+    Button_delete: TButton;
+    combo_bus: TComboBox;
+    Combo_mod: TComboBox;
+    Combo_port: TComboBox;
+    Combo_name: TComboBox;
+    ComboEhr: TComboBox;
+    ComboEmin: TComboBox;
+    ComboLongPress: TComboBox;
+    ComboShr: TComboBox;
+    ComboSmin: TComboBox;
+    Combosorttype: TComboBox;
     DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
     Label19: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
     Label6: TLabel;
     Label8: TLabel;
-    ListBox1: TListBox;
+    ListBox_mapfiles: TListBox;
     listbox_files_on_sd: TListBox;
     MainMenu1: TMainMenu;
     Memo1: TMemo;
@@ -64,32 +77,58 @@ type
     Panel10: TPanel;
     Panel11: TPanel;
     Panel2: TPanel;
+    Panel_dbgrid: TPanel;
+    Panel_treeview: TPanel;
+    Panel5: TPanel;
+    Panel_input_map: TPanel;
     Panel7: TPanel;
     Panel8: TPanel;
     Panel9: TPanel;
+    pnlcombos: TPanel;
     SaveDialog1: TSaveDialog;
     SaveDialog2: TSaveDialog;
     SdfDataSet1: TSdfDataSet;
     Splitter1: TSplitter;
     TreeView1: TTreeView;
     procedure btnconnectserialClick(Sender: TObject);
+    procedure ButNewRuleClick(Sender: TObject);
 
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure Button_deleteClick(Sender: TObject);
+    procedure CombosorttypeChange(Sender: TObject);
+    procedure DBGrid1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+      );
     procedure FormCreate(Sender: TObject);
-    procedure Populatetreeview(rulefile:TArduinoFile; treeview:TTreeView);
+    procedure listbox_files_on_sdChangeBounds(Sender: TObject);
+    procedure listbox_files_on_sdClick(Sender: TObject);
+    procedure listbox_files_on_sdDblClick(Sender: TObject);
+    procedure ListBox_mapfilesClick(Sender: TObject);
+    procedure ListBox_mapfilesKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Populatetreeview(rulefile:TArduinoFile; treeview:TTreeView;clearfirst:boolean;sorttype:string);
     function addNode(treeview:ttreeview;ParentNode:TTreeNode;Newnodename:string):ttreenode;
     function addrootNodeToTreeView(treeview:ttreeview;Newnodename:string):ttreenode;
-    function findInRuleFile(func,event,eventstate:string):boolean;
+    function findInRuleFile(func,event,eventstate,funcstate:string):boolean;
     procedure SdpoSerial1RxData(Sender: TObject);
     procedure TreeView1Change(Sender: TObject; Node: TTreeNode);
-
+    procedure fillcombos;
+    procedure refreshFileListbox;
+    function getArduinoFile(filename:string):TArduinoFile;
+    procedure setCurrentRulefile(filename:string);
+    function checkMapFiles:boolean;
 
 
   private
+    procedure addfieldtocombo(dataset: tdataset; fieldindex: integer;
+      combobox: TComboBox);
+    function checkarduinofiles(filename: string): boolean;
     procedure fillListFilesOnSD(Adata: String);
+    procedure fill_inp_map_combos(mapfile: TArduinoFile);
     procedure ParseInputSerialData(Adata: string);
     procedure recievedata(data: string);
     procedure SendSerialData(Header, data: string);
@@ -106,11 +145,12 @@ type
   current_rule,lastgroup,lastrule,serialbuff:string;
    buttonmaplist,buttonStateMaplist: Tmaplist;
    functionmaplist,functionStateMaplist: Tmaplist;
-   changed_controls: TObjectList;
+   //Arduinorulefiles:Tarduinorulefileslist;
+      Arduinorulefiles:Tobjectlist;
    loadingdata:boolean;
    prulerec:rulerecpointer;
    serialdata:string;
-   inputmapfile,rulefile,functionmapfile,ismap,fsmap,activerulefile:TArduinoFile;
+   inputmapfile,functionmapfile,ismap,fsmap,activerulefile:TArduinoFile;
   end;
 
 var
@@ -120,7 +160,7 @@ implementation
 
 {$R *.lfm}
 
- {fieldnumbers in rulefile}
+ {fieldnumbers in rulefile }
  Const
    crfInpbus = 2;
    crfInpmod = 3;
@@ -134,7 +174,7 @@ implementation
    crfminstart = 11;
    crfhrend = 12;
    crfminend = 13;
-
+   crflpress = 15;
    {fieldnumbers in map inputstate}
    cmfIState=0;
    cmfIvalue=1;
@@ -196,6 +236,108 @@ begin
           end;
        end;
  end;
+
+procedure TForm1.ButNewRuleClick(Sender: TObject);
+var
+  node:TTreeNode;
+  a:string;
+begin
+
+    if TreeView1.Selected <> nil then
+      begin
+
+              if TreeView1.Selected.Parent <> nil then
+            begin
+                 if TreeView1.Selected.Parent.Parent <> nil then
+                   begin
+                        if Combosorttype.Text='function' then
+                        if TreeView1.Selected.Parent.Parent.parent <> nil then
+                         begin
+                                frmnewrule.Combofunction.text:=TreeView1.Selected.Parent.Parent.parent.text;
+                                 frmnewrule.Comboinput.Text:=TreeView1.Selected.Parent.Parent.text; ;
+                                 frmnewrule.comboFuncState.text:=TreeView1.Selected.text;
+                                 frmnewrule.Comboinputstate.text:=TreeView1.Selected.Parent.text;
+                         end;
+                        if Combosorttype.Text='event' then
+                        if TreeView1.Selected.Parent.Parent.parent <> nil then
+                         begin
+                                frmnewrule.Comboinput.text:=TreeView1.Selected.Parent.Parent.parent.text;
+                                 frmnewrule.Combofunction.Text:=TreeView1.Selected.Parent.text; ;
+                                 frmnewrule.comboFuncState.text:=TreeView1.Selected.text;
+                                 frmnewrule.Comboinputstate.text:=TreeView1.Selected.Parent.parent.text;
+
+                         end;
+
+
+
+                   end;
+            end;
+
+      end;
+
+  if frmnewrule.ShowModal = mrOK then
+    begin
+
+
+     activerulefile.dataset.Insert;
+     activerulefile.dataset.Fields[crfInpbus].asstring:= inputmapfile.locateindataset(cmfINPbus,cmfINPname,frmnewrule.Comboinput.Text);
+     activerulefile.dataset.Fields[crfInpmod].asstring:=inputmapfile.locateindataset(cmfINPmod,cmfINPname,frmnewrule.Comboinput.Text);
+     activerulefile.dataset.Fields[crfInpport].asstring:=inputmapfile.locateindataset(cmfINPport,cmfINPname,frmnewrule.Comboinput.Text);
+     a:=ismap.locateindataset(cmfIState,cmfIvalue,frmnewrule.Comboinputstate.Text);
+     activerulefile.dataset.Fields[crfinpstate].asstring:=ismap.locateindataset(cmfIvalue,cmfIState,frmnewrule.Comboinputstate.Text);
+
+     activerulefile.dataset.Fields[crfoutpbus].asstring:=functionmapfile.locateindataset(cmfFUbus,cmfFUname,frmnewrule.Combofunction.Text);
+     activerulefile.dataset.Fields[crfoutpmodule].asstring:=functionmapfile.locateindataset(cmfFUmod,cmfFUname,frmnewrule.Combofunction.Text);
+     activerulefile.dataset.Fields[crfoutpport].asstring:=functionmapfile.locateindataset(cmfFUport,cmfFUname,frmnewrule.Combofunction.Text);
+
+     activerulefile.dataset.Fields[crfoutpstate].asstring:=fsmap.locateindataset(cmfFvalue,cmfFState,frmnewrule.comboFuncState.Text);
+
+     activerulefile.dataset.Fields[crfhrstart].asstring:=frmnewrule.ComboShr.Text;
+     activerulefile.dataset.Fields[crfminstart].asstring:=frmnewrule.ComboSmin.Text;
+     activerulefile.dataset.Fields[crfhrend].asstring:=frmnewrule.ComboEhr.Text;
+     activerulefile.dataset.Fields[crfminend].asstring:=frmnewrule.ComboEmin.Text;
+     activerulefile.dataset.Fields[crflpress].asstring:=frmnewrule.ComboLongPress.Text;
+     activerulefile.dataset.Post;
+     Populatetreeview(activerulefile,TreeView1,false,Combosorttype.text);
+
+      {fieldnumbers in rulefile
+ Const
+   crfInpbus = 2;
+   crfInpmod = 3;
+   crfInpport = 4;
+   crfinpstate = 5;
+   crfoutpbus = 6;
+   crfoutpmodule = 7;
+   crfoutpport = 8;
+   crfoutpstate = 9;
+   crfhrstart = 10;
+   crfminstart = 11;
+   crfhrend = 12;
+   crfminend = 13;
+   crflpress = 15;
+   {fieldnumbers in map inputstate}
+   cmfIState=0;
+   cmfIvalue=1;
+
+   {fieldnumbers in map input}
+   cmfINPname = 0;
+   cmfINPbus = 1;
+   cmfINPmod = 2;
+   cmfINPport = 3;
+
+   {fieldnumbers in map function state}
+   cmfFState=0;
+   cmfFvalue=1;
+
+   {fieldnumbers in map functions}
+   cmfFUname = 0;
+   cmfFUbus = 1;
+   cmfFUmod = 2;
+   cmfFUport = 3;
+                   }
+    end;
+end;
+
 procedure TForm1.recievedata(data: string);
 begin
       FrmSerialMonitor.Memo1.lines.add(data) ;
@@ -231,41 +373,169 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 var
   sl:tstringlist ;
+  r:TArduinoFile;
 begin
 
   sl:=TStringList.Create;
 sl.LoadFromFile('/home/johan/git/rule-generator/functionmap');
 functionmapfile:=TArduinoFile.create('functionmap',sl.Text);
  sl.Destroy;
-
-
-
  sl:=TStringList.Create;
  sl.LoadFromFile('/home/johan/git/rule-generator/functionstatemap');
  fsmap:=TArduinoFile.create('fsmap',sl.Text);
   sl.Destroy;
 
+//sl:=TStringList.Create;
+//sl.LoadFromFile('/home/johan/git/rule-generator/reglerodesberga.rules');
 
-sl:=TStringList.Create;
-sl.LoadFromFile('/home/johan/git/rule-generator/reglerodesberga.rules');
-rulefile:=TArduinoFile.create('rulefile',sl.Text);
- sl.Destroy;
- DBGrid3.DataSource:=rulefile.datasource;
+//r:=TArduinoFile.create('rulefile.r',sl.Text);
 
+//Arduinorulefiles.Add(r);
+
+// sl.Destroy;
+ //DBGrid3.DataSource:=rulefile.datasource;
 sl:=TStringList.Create;
 sl.LoadFromFile('/home/johan/git/rule-generator/inputmap');
 inputmapfile:=TArduinoFile.create('rulefile',sl.Text);
  sl.Destroy;
-
-
   sl:=TStringList.Create;
  sl.LoadFromFile('/home/johan/git/rule-generator/inputstatemap');
  ismap:=TArduinoFile.create('rulefile',sl.Text);
   sl.Destroy;
 
-  Populatetreeview(rulefile,TreeView1);
 
 
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  activerulefile.dataset.Edit;
+  activerulefile.dataset.Fields[crflpress].AsString:=ComboLongPress.Text;
+  activerulefile.dataset.Fields[crfhrstart].AsString:=ComboShr.Text;
+  activerulefile.dataset.Fields[crfhrend].AsString:=ComboEhr.Text;
+  activerulefile.dataset.Fields[crfminstart].AsString:=ComboSmin.Text;
+  activerulefile.dataset.Fields[crfminend].AsString:=ComboEmin.Text;
+  activerulefile.dataset.Post;
+  ShowMessage('Rule saved');
+end;
+
+function TForm1.checkarduinofiles(filename:string):boolean;
+var
+  i:integer;
+begin
+Result:=false;
+  for i :=0 to Arduinorulefiles.Count-1 do
+   begin
+        if TArduinoFile(Arduinorulefiles.Items[i]).Filename = filename then
+        begin
+            result:=True;
+            break;
+        end;
+
+   end;
+
+end;
+
+procedure TForm1.Button7Click(Sender: TObject);
+var
+r:TArduinoFile;
+i:integer;
+found:boolean;
+sl:TStringList;
+begin
+
+  if OpenDialog1.Execute then
+  begin
+      if not checkarduinofiles(OpenDialog1.FileName) then
+   begin
+   sl:=TStringList.Create;
+   sl.LoadFromFile(OpenDialog1.FileName);
+   if ExtractFileName(OpenDialog1.FileName) = 'istate.m' then
+   begin
+        if Assigned(ismap) then FreeAndNil(ismap);
+        ismap := TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
+   end
+   else
+   if ExtractFileName(OpenDialog1.FileName) = 'inp.m' then
+   begin
+        if Assigned(inputmapfile) then FreeAndNil(inputmapfile);
+        inputmapfile := TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
+   end
+   else
+   if ExtractFileName(OpenDialog1.FileName) = 'fstate.m' then
+   begin
+        if Assigned(fsmap) then FreeAndNil(fsmap);
+        fsmap := TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
+   end
+   else
+   if ExtractFileName(OpenDialog1.FileName) = 'func.m' then
+   begin
+        if Assigned(functionmapfile) then FreeAndNil(functionmapfile);
+        functionmapfile := TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
+   end
+   else
+   begin
+   r:=TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
+   Arduinorulefiles.Add(r);
+   end;
+   sl.Destroy;
+   refreshFileListbox;
+
+
+
+
+
+   end
+   else
+   begin
+        ShowMessage('Duplicate filename detected');
+   end;
+  end;
+
+
+end;
+
+procedure TForm1.Button_deleteClick(Sender: TObject);
+var
+node:TTreeNode;
+begin
+node:= TreeView1.Selected;
+if node <> nil then
+if node.Parent <> nil then
+  begin
+       if node.Parent.Parent <> nil then
+         begin
+              if node.Parent.Parent.parent <> nil then
+               begin
+                  if  MessageDlg('Delete rule?','Really?!',mtWarning,[mbOK, mbAbort],'') = mrOK then
+                   begin
+                    activerulefile.DataSet.edit;
+                    activerulefile.DataSet.Delete;
+                    Populatetreeview(activerulefile,TreeView1,true,Combosorttype.text);
+                   end;
+
+               end;
+          end;
+  end;
+
+end;
+
+procedure TForm1.CombosorttypeChange(Sender: TObject);
+begin
+   Populatetreeview(activerulefile,TreeView1,true,Combosorttype.text)
+end;
+
+procedure TForm1.DBGrid1KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key=46 then
+     begin
+      if  MessageDlg('Delete row?','Really?!',mtWarning,[mbOK, mbAbort],'') = mrOK then
+         begin
+          dbgrid1.DataSource.DataSet.edit;
+          dbgrid1.DataSource.DataSet.Delete;
+         end;
+     end;
 
 end;
 
@@ -277,8 +547,8 @@ form1.Top := 1;
     form1.Align:=alClient;
     form1.BorderStyle := bsNone;
 form1.Parent:=Form3;
-
-
+Arduinorulefiles:=Tobjectlist.Create(true);
+//rulefile:= TArduinoFile.create('','');
 
 
 
@@ -287,20 +557,116 @@ form1.Parent:=Form3;
 
 end;
 
-procedure TForm1.Populatetreeview(rulefile:TArduinoFile; treeview: TTreeView);
+procedure TForm1.listbox_files_on_sdChangeBounds(Sender: TObject);
+begin
+  if checkMapFiles then
+setCurrentRulefile(listbox_files_on_sd.Items[listbox_files_on_sd.ItemIndex]);
+end;
+
+procedure TForm1.listbox_files_on_sdClick(Sender: TObject);
+begin
+  if checkMapFiles then
+     begin
+setCurrentRulefile(listbox_files_on_sd.Items[listbox_files_on_sd.ItemIndex]);
+
+Panel_treeview.Visible:=true;
+Panel_dbgrid.Visible:=false;
+  editmapfilesform.Formmapfileeditor.DBGrid1.DataSource:=activerulefile.datasource;
+     end;
+
+end;
+
+procedure TForm1.listbox_files_on_sdDblClick(Sender: TObject);
+begin
+
+
+end;
+  procedure TForm1.fill_inp_map_combos(mapfile:TArduinoFile);
+
+  begin
+  combo_bus.Clear;
+          Combo_mod.Clear;
+          Combo_port.clear;
+          Combo_name.Clear;
+          mapfile.dataset.First;
+          while not mapfile.dataset.eof do
+                begin
+                     Combo_name.AddItem(mapfile.dataset.Fields[cmfFUname].AsString,nil);
+                     Combo_bus.AddItem(mapfile.dataset.Fields[cmfFUbus].AsString,nil);
+                     Combo_mod.AddItem(mapfile.dataset.Fields[cmfFUmod].AsString,nil);
+                     Combo_port.AddItem(mapfile.dataset.Fields[cmfFUport].AsString,nil);
+                     mapfile.dataset.next;
+                end;
+  end;
+
+procedure TForm1.ListBox_mapfilesClick(Sender: TObject);
+begin
+
+  Panel_treeview.Visible:=false;
+  Panel_dbgrid.Visible:=true;
+
+  if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'istate.m' then
+  begin
+  DBGrid1.DataSource:=ismap.datasource;
+          Panel_input_map.Visible:=false;
+  end;
+    if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'inp.m' then
+    begin
+         fill_inp_map_combos(inputmapfile);
+                 Panel_input_map.Visible:=true;
+         DBGrid1.DataSource:=inputmapfile.datasource;
+    end;
+      if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'fstate.m' then
+      begin
+        DBGrid1.DataSource:=fsmap.datasource;
+                Panel_input_map.Visible:=false;
+        end;
+
+        if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'func.m' then
+        begin
+
+        fill_inp_map_combos(functionmapfile);
+        Panel_input_map.Visible:=true;
+        DBGrid1.DataSource:=functionmapfile.datasource;
+
+        end;
+      end;
+
+
+
+procedure TForm1.ListBox_mapfilesKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+
+end;
+
+procedure TForm1.Populatetreeview(rulefile:TArduinoFile; treeview: TTreeView;clearfirst:boolean;sorttype:string);
 var
 i:integer;
 n:TTreeNode;
 begin
+  if clearfirst then
+treeview.Items.Clear;
 rulefile.dataset.First;
+if sorttype = 'function' then
 for i := 0 to rulefile.dataset.RecordCount-1 do
     begin
-
     n:=addrootNodeToTreeView(treeview,functionmapfile.locateindataset(cmfFUname,cmfFUbus, rulefile.dataset.Fields[crfoutpbus].asstring,cmfFUmod, rulefile.dataset.Fields[crfoutpmodule].asstring,cmfFUport, rulefile.dataset.Fields[crfoutpport].asstring));
     n:=addNode(TreeView1,n,inputmapfile.locateindataset(cmfINPname,cmfINPbus, rulefile.dataset.Fields[crfInpbus].asstring,cmfINPmod, rulefile.dataset.Fields[crfInpmod].asstring,cmfINPport, rulefile.dataset.Fields[crfInpport].asstring));
     n:=addNode(TreeView1,n,ismap.locateindataset(cmfIState,cmfIvalue, rulefile.dataset.Fields[crfinpstate].asstring));
+    n:=addNode(TreeView1,n,fsmap.locateindataset(cmfFState,cmfFvalue, rulefile.dataset.Fields[crfoutpstate].asstring));
     rulefile.dataset.Next;
     end;
+if sorttype = 'event' then
+for i := 0 to rulefile.dataset.RecordCount-1 do
+    begin
+    n:=addrootNodeToTreeView(treeview,inputmapfile.locateindataset(cmfINPname,cmfINPbus, rulefile.dataset.Fields[crfInpbus].asstring,cmfINPmod, rulefile.dataset.Fields[crfInpmod].asstring,cmfINPport, rulefile.dataset.Fields[crfInpport].asstring));
+    n:=addNode(TreeView1,n,ismap.locateindataset(cmfIState,cmfIvalue, rulefile.dataset.Fields[crfinpstate].asstring));
+    n:=addNode(TreeView1,n,functionmapfile.locateindataset(cmfFUname,cmfFUbus, rulefile.dataset.Fields[crfoutpbus].asstring,cmfFUmod, rulefile.dataset.Fields[crfoutpmodule].asstring,cmfFUport, rulefile.dataset.Fields[crfoutpport].asstring));
+    n:=addNode(TreeView1,n,fsmap.locateindataset(cmfFState,cmfFvalue, rulefile.dataset.Fields[crfoutpstate].asstring));
+    rulefile.dataset.Next;
+    end;
+
 
 
 end;
@@ -359,9 +725,9 @@ for i :=0 to treeview.Items.Count-1 do
     end;
 end;
 
-function TForm1.findInRuleFile(func, event, eventstate: string): boolean;
+function TForm1.findInRuleFile(func, event, eventstate,funcstate: string): boolean;
 var
-funcbus,funcmod,funcport,evbus,evmod,evport,evstate:string;
+funcbus,funcmod,funcport,evbus,evmod,evport,evstate,functstate:string;
 a: array of string;
 b:array of integer;
 begin
@@ -373,7 +739,8 @@ evbus:= inputmapfile.locateindataset(cmfINPbus,cmfINPname, event);
 evmod:= inputmapfile.locateindataset(cmfINPmod,cmfINPname, event);
 evport:= inputmapfile.locateindataset(cmfINPport,cmfINPname, event);
 evstate:= ismap.locateindataset(cmfIvalue,cmfIState, eventstate);
-SetLength(b,7);
+functstate:=fsmap.locateindataset(cmfFvalue,cmfFState, funcstate);
+SetLength(b,8);
 b[0]:= crfoutpbus;//,
 b[1]:=crfoutpmodule;
 b[2]:=crfoutpport;
@@ -381,7 +748,9 @@ b[3]:=crfInpbus;
 b[4]:=crfInpmod;
 b[5]:=crfInpport;
 b[6]:=crfinpstate;
-SetLength(a,7);
+b[7]:=crfoutpstate;
+
+SetLength(a,8);
 a[0]:= funcbus;//,
 a[1]:=funcmod;
 a[2]:=funcport;
@@ -389,7 +758,8 @@ a[3]:=evbus;
 a[4]:=evmod;
 a[5]:=evport;
 a[6]:=evstate;
-rulefile.locateindataset(b,a);
+a[7]:=functstate;
+if activerulefile.locateindataset(b,a) then Result := true;
 
 end;
 
@@ -435,16 +805,229 @@ epos := Pos('#', serialdata);
 end;
 
 procedure TForm1.TreeView1Change(Sender: TObject; Node: TTreeNode);
+var
+imin,imax:integer;
 begin
+try
+if node <> nil then
 if node.Parent <> nil then
   begin
        if node.Parent.Parent <> nil then
          begin
-              findInRuleFile(node.Parent.Parent.Text,node.Parent.Text,node.Text);
+              if node.Parent.Parent.parent <> nil then
+               begin
+                   if Combosorttype.Text='function' then
+                   begin
+                         if findInRuleFile(node.Parent.Parent.parent.Text,node.Parent.Parent.Text,node.Parent.Text,node.Text) then
+                           begin
+                                ComboShr.Text:=activerulefile.dataset.Fields[crfhrstart].asstring;
+                                ComboEhr.Text:=activerulefile.dataset.Fields[crfhrend].asstring;
+                                Comboemin.Text:=activerulefile.dataset.Fields[crfminend].asstring;
+                                ComboSmin.Text:=activerulefile.dataset.Fields[crfminstart].asstring;
+                                ComboLongPress.Text:=activerulefile.dataset.Fields[crflpress].asstring;
+                               // comboFuncState.Text:=fsmap.locateindataset(cmfFState,cmfFvalue,rulefile.dataset.Fields[crfoutpstate].asstring);
+                           end;
+                    end;
+                   if Combosorttype.Text = 'event' then
+                      begin
+                       if findInRuleFile(node.Parent.Text,node.Parent.Parent.parent.Text,node.Parent.Parent.Text,node.Text) then
+                           begin
+                                ComboShr.Text:=activerulefile.dataset.Fields[crfhrstart].asstring;
+                                ComboEhr.Text:=activerulefile.dataset.Fields[crfhrend].asstring;
+                                Comboemin.Text:=activerulefile.dataset.Fields[crfminend].asstring;
+                                ComboSmin.Text:=activerulefile.dataset.Fields[crfminstart].asstring;
+                                ComboLongPress.Text:=activerulefile.dataset.Fields[crflpress].asstring;
+                               // comboFuncState.Text:=fsmap.locateindataset(cmfFState,cmfFvalue,rulefile.dataset.Fields[crfoutpstate].asstring);
+                           end;
+                       end;
+                   end;
+
+              end;
          end;
-  end;
+   if node <> nil then
+      if node.HasChildren then
+      pnlcombos.Visible:=false
+      else
+       pnlcombos.Visible:=true
+   else
+   pnlcombos.Visible:=false;
+
+
+
+   except
+
+   end;
+
+
+ //  pnlcombos.Left:=Node.DisplayTextRight +120;
+  // pnlcombos.Top:=node.DisplayExpandSignRect.Top - pnlcombos.Height-(TreeView1.Height-node.DisplayExpandSignRect.Top );
+
+
+  // pnlcombos.Parent:=TreeView1;
+end;
+
+procedure TForm1.fillcombos;
+var
+i:integer;
+begin
+//comboFuncState.Clear;
+ComboSmin.Clear;
+ComboShr.Clear;
+ComboEhr.Clear;
+ComboEmin.Clear;
+
+while not fsmap.dataset.EOF do
+      begin
+         //  comboFuncState.AddItem(fsmap.dataset.Fields[cmfFUname].asstring,nil);
+           fsmap.dataset.next;
+      end;
+for i := 0 to 59 do
+    begin
+         if i < 10 then
+           begin
+           ComboSmin.AddItem('0'+inttostr(i),nil) ;
+           ComboEmin.AddItem('0'+inttostr(i),nil) ;
+           end
+           else
+           begin
+           ComboSmin.AddItem(inttostr(i),nil);
+           ComboEmin.AddItem(inttostr(i),nil);
+           end;
+    end;
+for i := 0 to 23 do
+    begin
+         if i < 10 then
+           begin
+           ComboShr.AddItem('0'+inttostr(i),nil) ;
+           ComboEhr.AddItem('0'+inttostr(i),nil) ;
+           end
+           else
+           begin
+           ComboShr.AddItem(inttostr(i),nil);
+           ComboEhr.AddItem(inttostr(i),nil);
+           end;
+    end;
+ frmnewrule.ComboShr.Items:=ComboShr.items;
+ frmnewrule.Comboehr.Items:=Comboehr.items;
+ frmnewrule.ComboSmin.Items:=ComboSmin.items;
+ frmnewrule.Comboemin.Items:=Comboemin.items;
+ frmnewrule.ComboLongPress.Items:=ComboLongPress.items;
+  frmnewrule.ComboShr.text:='00';
+ frmnewrule.Comboehr.text:='00';
+ frmnewrule.ComboSmin.text:='00';
+ frmnewrule.Comboemin.text:='00';
+ frmnewrule.ComboLongPress.text:='0';
+addfieldtocombo(ismap.dataset,cmfIState,frmnewrule.Comboinputstate);
+addfieldtocombo(fsmap.dataset,cmfFState,frmnewrule.comboFuncState);
+addfieldtocombo(functionmapfile.dataset,cmfFUname,frmnewrule.Combofunction);
+addfieldtocombo(inputmapfile.dataset,cmfINPname,frmnewrule.Comboinput);
+
 
 end;
+
+procedure TForm1.refreshFileListbox;
+var
+i:integer;
+a:string;
+begin
+    listbox_files_on_sd.Clear;
+    ListBox_mapfiles.Clear;
+for i := 0 to Arduinorulefiles.Count -1 do
+    begin
+         listbox_files_on_sd.AddItem(TArduinoFile(Arduinorulefiles.items[i]).Filename,nil);
+    end;
+
+if  Assigned(ismap) then
+    begin
+    ListBox_mapfiles.AddItem(ismap.Filename,nil);
+    end ;
+
+    if  Assigned(fsmap) then
+    begin
+    ListBox_mapfiles.AddItem(fsmap.Filename,nil);
+    end;
+    if  Assigned(functionmapfile) then
+    begin
+    ListBox_mapfiles.AddItem(functionmapfile.Filename,nil);
+    end;
+
+    if  Assigned(inputmapfile) then
+    begin
+    ListBox_mapfiles.AddItem(inputmapfile.Filename,nil);
+    end;
+
+
+end;
+
+function TForm1.getArduinoFile(filename: string): TArduinoFile;
+var
+i:integer;
+begin
+for i := 0 to Arduinorulefiles.Count -1 do
+    begin
+         if TArduinoFile(Arduinorulefiles.items[i]).Filename = filename then
+           begin
+           result:=TArduinoFile(Arduinorulefiles.items[i]);
+           break;
+           end;
+    end;
+end;
+
+procedure TForm1.setCurrentRulefile(filename:string);
+begin
+ activerulefile:= getArduinoFile(filename);
+ Populatetreeview(activerulefile,TreeView1,true,Combosorttype.text);
+ fillcombos;
+end;
+
+function TForm1.checkMapFiles: boolean;
+begin
+  if not Assigned(ismap) then
+    begin
+    result :=false;
+    showmessage('inpu tstate map file is not loaded');
+    end
+    else
+    if not Assigned(fsmap) then
+    begin
+    result :=false;
+    showmessage('function state map file is not loaded');
+    end
+    else
+    if not Assigned(functionmapfile) then
+    begin
+    result :=false;
+    showmessage('function map map file is not loaded');
+    end
+    else
+    if not Assigned(inputmapfile) then
+    begin
+    result :=false;
+    showmessage('input map map file is not loaded');
+    end
+    else
+    result:=true;
+
+
+
+
+
+
+end;
+
+  procedure TForm1.addfieldtocombo(dataset: tdataset; fieldindex: integer;
+   combobox: TComboBox);
+
+ begin
+ combobox.clear;
+ dataset.First;
+ while not dataset.eof do
+       begin
+         combobox.AddItem(dataset.Fields[fieldindex].asstring,nil);
+         dataset.next;
+       end;
+
+ end;
 
 procedure TForm1.ParseInputSerialData(Adata: string);
 var

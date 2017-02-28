@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls,unitconnectionsandstuff;
+  ExtCtrls, DBGrids,unitconnectionsandstuff;
 
 type
       TchangedRadio = procedure(Sender : Tobject;data:string) of object;
@@ -21,6 +21,7 @@ type
     ComboValOne: TComboBox;
     ComboValTwo: TComboBox;
     ComboValThree: TComboBox;
+    DBGrid1: TDBGrid;
     Memo1: TMemo;
     Panel2: TPanel;
     Panel3: TPanel;

@@ -8,7 +8,8 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, sdflaz, mainForm, sdposeriallaz, serialsettingsform, serialmonitorform,
-  unitconnectionsandstuff, editmapfilesform, mainmdiform, functions;
+  unitconnectionsandstuff, editmapfilesform, mainmdiform, functions, 
+FormNewRule;
 
 {$R *.res}
 
@@ -22,8 +23,7 @@ begin
      Application.CreateForm(TfrmSerialSettings, frmSerialSettings);
   Application.CreateForm(TFrmSerialMonitor, FrmSerialMonitor);
 
-
-
+  Application.CreateForm(Tfrmnewrule, frmnewrule);
   Application.Run;
 end.
 

@@ -1,7 +1,7 @@
 object Formmapfileeditor: TFormmapfileeditor
   Left = 496
   Height = 787
-  Top = 362
+  Top = 265
   Width = 1319
   Caption = 'Mapfile Editor'
   ClientHeight = 787
@@ -45,7 +45,7 @@ object Formmapfileeditor: TFormmapfileeditor
         Left = 24
         Height = 23
         Top = 8
-        Width = 101
+        Width = 98
         Caption = 'Function Map'
         Checked = True
         OnChange = RadioinputstateChange
@@ -56,7 +56,7 @@ object Formmapfileeditor: TFormmapfileeditor
         Left = 136
         Height = 23
         Top = 8
-        Width = 83
+        Width = 81
         Caption = 'Input Map'
         OnChange = RadioinputstateChange
         TabOrder = 0
@@ -65,7 +65,7 @@ object Formmapfileeditor: TFormmapfileeditor
         Left = 256
         Height = 23
         Top = 8
-        Width = 105
+        Width = 101
         Caption = 'Function State'
         OnChange = RadioinputstateChange
         TabOrder = 2
@@ -74,14 +74,14 @@ object Formmapfileeditor: TFormmapfileeditor
         Left = 384
         Height = 23
         Top = 8
-        Width = 87
+        Width = 84
         Caption = 'Input State'
         OnChange = RadioinputstateChange
         TabOrder = 1
       end
       object ComboBox1: TComboBox
         Left = 24
-        Height = 29
+        Height = 27
         Top = 40
         Width = 461
         ItemHeight = 0
@@ -99,7 +99,7 @@ object Formmapfileeditor: TFormmapfileeditor
       end
       object ComboValThree: TComboBox
         Left = 648
-        Height = 29
+        Height = 27
         Top = 40
         Width = 72
         ItemHeight = 0
@@ -107,7 +107,7 @@ object Formmapfileeditor: TFormmapfileeditor
       end
       object ComboValTwo: TComboBox
         Left = 568
-        Height = 29
+        Height = 27
         Top = 40
         Width = 72
         ItemHeight = 0
@@ -115,7 +115,7 @@ object Formmapfileeditor: TFormmapfileeditor
       end
       object ComboValOne: TComboBox
         Left = 488
-        Height = 29
+        Height = 27
         Top = 40
         Width = 72
         ItemHeight = 0

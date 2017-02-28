@@ -1,12 +1,12 @@
 object Form1: TForm1
-  Left = 4181
+  Left = 4291
   Height = 992
-  Top = 0
-  Width = 1213
+  Top = 29
+  Width = 1204
   BorderStyle = bsNone
   Caption = 'Rule Creator'
   ClientHeight = 992
-  ClientWidth = 1213
+  ClientWidth = 1204
   Menu = MainMenu1
   OnCreate = FormCreate
   LCLVersion = '1.6.0.4'
@@ -22,56 +22,66 @@ object Form1: TForm1
     TabOrder = 0
   end
   object Panel1: TPanel
-    Left = 480
+    Left = 1071
     Height = 848
     Top = 144
-    Width = 733
+    Width = 133
     Align = alRight
-    TabOrder = 1
-  end
-  object Panel2: TPanel
-    Left = 0
-    Height = 848
-    Top = 144
-    Width = 469
-    Align = alClient
-    Caption = 'Panel2'
     ClientHeight = 848
-    ClientWidth = 469
-    TabOrder = 2
-    object ComboBox1: TComboBox
-      Left = 8
-      Height = 34
-      Top = 8
-      Width = 208
-      ItemHeight = 0
+    ClientWidth = 133
+    TabOrder = 1
+    object Button5: TButton
+      Left = 24
+      Height = 25
+      Top = 16
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'toggle dbg'
       TabOrder = 0
-      Text = 'ComboBox1'
     end
-    object TreeView1: TTreeView
-      Left = 8
-      Height = 664
-      Top = 56
-      Width = 453
-      Anchors = [akLeft, akRight, akBottom]
+    object Button1: TButton
+      Left = 24
+      Height = 25
+      Top = 48
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Print Rulefile'
+      OnClick = Button1Click
       TabOrder = 1
-      OnChange = TreeView1Change
     end
-    object ComboBox2: TComboBox
-      Left = 8
-      Height = 34
-      Top = 728
-      Width = 160
-      ItemHeight = 0
+    object btnTestRule: TButton
+      Left = 24
+      Height = 25
+      Top = 80
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Test Rule'
       TabOrder = 2
-      Text = 'ComboBox2'
+    end
+    object Button12: TButton
+      Left = 24
+      Height = 25
+      Top = 112
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Export rules'
+      TabOrder = 3
+    end
+    object Button13: TButton
+      Left = 24
+      Height = 25
+      Top = 144
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Sync time'
+      TabOrder = 4
     end
   end
   object Splitter1: TSplitter
-    Left = 469
+    Left = 1064
     Height = 848
     Top = 144
-    Width = 11
+    Width = 7
     Align = alRight
     ResizeAnchor = akRight
   end
@@ -95,39 +105,11 @@ object Form1: TForm1
     Left = 0
     Height = 144
     Top = 0
-    Width = 1213
+    Width = 1204
     Align = alTop
     ClientHeight = 144
-    ClientWidth = 1213
-    TabOrder = 4
-    object Button1: TButton
-      Left = 1119
-      Height = 25
-      Top = 40
-      Width = 75
-      Anchors = [akTop, akRight]
-      Caption = 'Print Rulefile'
-      OnClick = Button1Click
-      TabOrder = 0
-    end
-    object Button5: TButton
-      Left = 1119
-      Height = 25
-      Top = 8
-      Width = 75
-      Anchors = [akTop, akRight]
-      Caption = 'toggle dbg'
-      TabOrder = 1
-    end
-    object Button12: TButton
-      Left = 1119
-      Height = 25
-      Top = 72
-      Width = 75
-      Anchors = [akTop, akRight]
-      Caption = 'Export rules'
-      TabOrder = 2
-    end
+    ClientWidth = 1204
+    TabOrder = 3
     object Panel8: TPanel
       Left = 16
       Height = 120
@@ -136,30 +118,23 @@ object Form1: TForm1
       BorderStyle = bsSingle
       ClientHeight = 118
       ClientWidth = 110
-      TabOrder = 3
+      TabOrder = 0
       object Button7: TButton
         Left = 8
         Height = 25
-        Top = 35
+        Top = 34
         Width = 96
         Caption = 'Open'
+        OnClick = Button7Click
         TabOrder = 0
-      end
-      object Button8: TButton
-        Left = 8
-        Height = 25
-        Top = 61
-        Width = 96
-        Caption = 'Save'
-        TabOrder = 1
       end
       object Button9: TButton
         Left = 8
         Height = 25
-        Top = 87
+        Top = 64
         Width = 96
         Caption = 'Save AS'
-        TabOrder = 2
+        TabOrder = 1
       end
       object Label2: TLabel
         Left = 32
@@ -178,7 +153,7 @@ object Form1: TForm1
       BorderStyle = bsSingle
       ClientHeight = 118
       ClientWidth = 118
-      TabOrder = 4
+      TabOrder = 1
       object btnconnectserial: TButton
         Left = 7
         Height = 25
@@ -218,84 +193,368 @@ object Form1: TForm1
         ParentColor = False
       end
     end
-    object Button13: TButton
-      Left = 1038
-      Height = 25
-      Top = 8
-      Width = 75
-      Anchors = [akTop, akRight]
-      Caption = 'Sync time'
-      TabOrder = 5
-    end
-    object btnTestRule: TButton
-      Left = 1038
-      Height = 25
-      Top = 40
-      Width = 75
-      Anchors = [akTop, akRight]
-      Caption = 'Test Rule'
-      TabOrder = 6
-    end
     object Panel10: TPanel
       Left = 264
       Height = 120
       Top = 8
-      Width = 170
+      Width = 234
       Caption = 'Panel10'
       ClientHeight = 120
-      ClientWidth = 170
-      TabOrder = 7
+      ClientWidth = 234
+      TabOrder = 2
       object listbox_files_on_sd: TListBox
         Left = 8
         Height = 107
         Top = 6
-        Width = 152
+        Width = 216
         ItemHeight = 0
-        ScrollWidth = 150
+        OnChangeBounds = listbox_files_on_sdChangeBounds
+        OnClick = listbox_files_on_sdClick
+        OnDblClick = listbox_files_on_sdDblClick
+        ScrollWidth = 214
         TabOrder = 0
         TopIndex = -1
       end
     end
     object Panel11: TPanel
-      Left = 448
+      Left = 512
       Height = 120
       Top = 8
-      Width = 138
+      Width = 194
       Caption = 'Panel11'
       ClientHeight = 120
-      ClientWidth = 138
-      TabOrder = 8
-      object ListBox1: TListBox
-        Left = 0
+      ClientWidth = 194
+      TabOrder = 3
+      object ListBox_mapfiles: TListBox
+        Left = 8
         Height = 107
         Top = 6
-        Width = 132
+        Width = 176
         ItemHeight = 0
-        ScrollWidth = 130
+        OnClick = ListBox_mapfilesClick
+        OnKeyDown = ListBox_mapfilesKeyDown
+        ScrollWidth = 174
         TabOrder = 0
         TopIndex = -1
       end
     end
-    object Button2: TButton
-      Left = 664
-      Height = 25
-      Top = 32
-      Width = 75
-      Caption = 'Button2'
-      OnClick = Button2Click
-      TabOrder = 9
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 848
+    Top = 144
+    Width = 1064
+    Align = alClient
+    Caption = 'Panel2'
+    ClientHeight = 848
+    ClientWidth = 1064
+    TabOrder = 4
+    object Panel_treeview: TPanel
+      Left = 1
+      Height = 846
+      Top = 1
+      Width = 1062
+      Align = alClient
+      Caption = 'Panel_treeview'
+      ClientHeight = 846
+      ClientWidth = 1062
+      TabOrder = 0
+      object TreeView1: TTreeView
+        Left = 1
+        Height = 794
+        Top = 51
+        Width = 1060
+        Align = alClient
+        ReadOnly = True
+        TabOrder = 0
+        OnChange = TreeView1Change
+        Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+      end
+      object Panel5: TPanel
+        Left = 1
+        Height = 50
+        Top = 1
+        Width = 1060
+        Align = alTop
+        ClientHeight = 50
+        ClientWidth = 1060
+        TabOrder = 2
+        object Combosorttype: TComboBox
+          Left = 8
+          Height = 29
+          Top = 16
+          Width = 104
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            'function'
+            'event'
+          )
+          OnChange = CombosorttypeChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = 'function'
+        end
+        object Button_delete: TButton
+          Left = 889
+          Height = 25
+          Top = 20
+          Width = 75
+          Anchors = [akTop, akRight]
+          Caption = 'Delete'
+          OnClick = Button_deleteClick
+          TabOrder = 1
+        end
+        object ButNewRule: TButton
+          Left = 969
+          Height = 25
+          Top = 20
+          Width = 75
+          Anchors = [akTop, akRight]
+          Caption = 'New'
+          OnClick = ButNewRuleClick
+          TabOrder = 2
+        end
+      end
+      object pnlcombos: TPanel
+        Left = 689
+        Height = 64
+        Top = 56
+        Width = 354
+        Align = alCustom
+        Alignment = taRightJustify
+        Anchors = [akTop, akRight]
+        BevelOuter = bvNone
+        ClientHeight = 64
+        ClientWidth = 354
+        Color = clNone
+        ParentColor = False
+        TabOrder = 1
+        Visible = False
+        object ComboEmin: TComboBox
+          Left = 288
+          Height = 34
+          Top = 26
+          Width = 64
+          ItemHeight = 0
+          Items.Strings = (
+            '0'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+          )
+          TabOrder = 0
+          Text = 'ComboEmin'
+        end
+        object ComboSmin: TComboBox
+          Left = 152
+          Height = 34
+          Top = 26
+          Width = 64
+          ItemHeight = 0
+          Items.Strings = (
+            '0'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+          )
+          TabOrder = 1
+          Text = 'ComboSmin'
+        end
+        object ComboShr: TComboBox
+          Left = 88
+          Height = 34
+          Top = 25
+          Width = 64
+          ItemHeight = 0
+          Items.Strings = (
+            '0'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+          )
+          TabOrder = 2
+          Text = 'ComboShr'
+        end
+        object ComboEhr: TComboBox
+          Left = 224
+          Height = 34
+          Top = 26
+          Width = 64
+          ItemHeight = 0
+          Items.Strings = (
+            '0'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+          )
+          TabOrder = 3
+          Text = 'ComboEhr'
+        end
+        object Label4: TLabel
+          Left = 88
+          Height = 17
+          Top = 2
+          Width = 85
+          Caption = 'Active between'
+          ParentColor = False
+        end
+        object ComboLongPress: TComboBox
+          Left = 0
+          Height = 34
+          Top = 25
+          Width = 80
+          ItemHeight = 0
+          Items.Strings = (
+            '0'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+          )
+          TabOrder = 4
+          Text = 'ComboLongPress'
+        end
+        object Label3: TLabel
+          Left = 0
+          Height = 17
+          Top = 2
+          Width = 58
+          Caption = 'Longpress'
+          ParentColor = False
+        end
+        object Button3: TButton
+          Left = 285
+          Height = 20
+          Top = 2
+          Width = 67
+          Caption = 'Save'
+          OnClick = Button3Click
+          TabOrder = 5
+        end
+      end
+    end
+    object Panel_dbgrid: TPanel
+      Left = 1
+      Height = 846
+      Top = 1
+      Width = 1062
+      Align = alClient
+      Caption = 'Panel_dbgrid'
+      ClientHeight = 846
+      ClientWidth = 1062
+      TabOrder = 1
+      object DBGrid1: TDBGrid
+        Left = 1
+        Height = 801
+        Top = 44
+        Width = 1060
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        TabOrder = 0
+        OnKeyDown = DBGrid1KeyDown
+      end
+      object Panel_input_map: TPanel
+        Left = 1
+        Height = 43
+        Top = 1
+        Width = 1060
+        Align = alTop
+        ClientHeight = 43
+        ClientWidth = 1060
+        TabOrder = 1
+        object combo_bus: TComboBox
+          Left = 696
+          Height = 34
+          Top = 0
+          Width = 79
+          ItemHeight = 0
+          TabOrder = 0
+          Text = 'combo_bus'
+        end
+        object Combo_mod: TComboBox
+          Left = 782
+          Height = 34
+          Top = 1
+          Width = 79
+          ItemHeight = 0
+          TabOrder = 1
+          Text = 'Combo_mod'
+        end
+        object Combo_port: TComboBox
+          Left = 864
+          Height = 34
+          Top = 1
+          Width = 79
+          ItemHeight = 0
+          TabOrder = 2
+          Text = 'Combo_port'
+        end
+        object Combo_name: TComboBox
+          Left = 472
+          Height = 34
+          Top = 1
+          Width = 220
+          ItemHeight = 0
+          TabOrder = 3
+          Text = 'Combo_name'
+        end
+        object Button2: TButton
+          Left = 948
+          Height = 33
+          Top = 1
+          Width = 96
+          Caption = 'Button2'
+          TabOrder = 4
+        end
+      end
     end
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.rules'
     Filter = 'Rule files|*.rules'
     Options = [ofCreatePrompt, ofEnableSizing, ofViewDetail]
-    left = 776
+    left = 800
     top = 56
   end
   object OpenDialog1: TOpenDialog
-    DefaultExt = '.rules'
-    Filter = 'Rule files|*.rules'
+    DefaultExt = '.r'
+    Filter = 'Rule files|*.r|Map files|*.m'
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     left = 848
     top = 16
@@ -303,8 +562,8 @@ object Form1: TForm1
   object SaveDialog2: TSaveDialog
     DefaultExt = '.r'
     Filter = 'Arduino Rule files|*.r'
-    left = 856
-    top = 96
+    left = 1040
+    top = 32
   end
   object SdfDataSet1: TSdfDataSet
     FileMustExist = True
@@ -439,7 +698,6 @@ object Form1: TForm1
         Precision = -1
         Size = 120
       end>
-    Active = True
     AllowMultiLine = True
     Delimiter = ','
     FirstLineAsSchema = False

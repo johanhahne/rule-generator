@@ -25,9 +25,9 @@ uses
       function locateindataset(returnfieldindex:integer;SFidx1:integer;searchstring1:string;SFidx2:integer;searchstring2:string) :String; overload;
       function locateindataset(returnfieldindex:integer;SFidx1:integer;searchstring1:string;SFidx2:integer;searchstring2:string;SFidx3:integer;searchstring3:string) :String; overload;
       function locateindataset(sfields: array of integer; sstrings: array of string): boolean; overload;
+
   var
       Filename:String;
-
       datasource:TDataSource;
       dataset:TSdfDataSet;
 
@@ -143,6 +143,7 @@ var
   fieldnames:string;
   found,foundfield:boolean;
   i:integer;
+  tmp1,tmp2:string;
 begin
      dataset.first;
      found:=false;
@@ -152,6 +153,8 @@ begin
      begin
           for i := low(sfields) to high(sfields) do
           begin
+          tmp1:= dataset.Fields[sfields[i]].asstring;
+          tmp2:= sstrings[i];
            if dataset.Fields[sfields[i]].asstring =  sstrings[i] then
            begin
                foundfield:=true;
@@ -167,12 +170,13 @@ begin
        if foundfield then
        begin
        found:=true;
+
        break;
        end;
 
      dataset.Next;
      end;
-
+    Result:=found;
 end;
 
 
