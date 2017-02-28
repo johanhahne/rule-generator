@@ -46,7 +46,7 @@ begin
      datasource:=TDataSource.Create(nil);
      dataset:=TSdfDataSet.Create(nil);
      datasource.DataSet:=dataset;
-     dataset.Delimiter:=',';
+     dataset.Delimiter:=';';
      try
      aStringStream:=TStringStream.Create(d);
      dataset.LoadFromStream(aStringStream);

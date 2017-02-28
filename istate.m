@@ -1,2 +1,2 @@
-press,1
-upp,0
+press;1
+upp;0

@@ -14,7 +14,7 @@ uses
     { TArduinoFile }
 
     TArduinoFile = Class
-          constructor create(filename:string;data:string);
+          constructor create(fname:string;data:string);
           destructor destroy;
   private
     { private declarations }
@@ -37,7 +37,7 @@ implementation
 
 { TArduinoFile }
 
-constructor TArduinoFile.create(filename: string;data:string);
+constructor TArduinoFile.create(fname: string;data:string);
 var
   aStringStream:TStringStream;
   d:string;
@@ -58,7 +58,7 @@ begin
      datasource.Enabled:=true;
      finally
      end;
-
+     filename:=fname;
 end;
 
 destructor TArduinoFile.destroy;

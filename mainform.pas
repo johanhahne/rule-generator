@@ -95,6 +95,7 @@ type
 
     procedure Button10Click(Sender: TObject);
     procedure Button11Click(Sender: TObject);
+    procedure Button12Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -159,8 +160,7 @@ var
 implementation
 
 {$R *.lfm}
-
- {fieldnumbers in rulefile }
+   {fieldnumbers in rulefile
  Const
    crfInpbus = 2;
    crfInpmod = 3;
@@ -175,6 +175,41 @@ implementation
    crfhrend = 12;
    crfminend = 13;
    crflpress = 15;
+   {fieldnumbers in map inputstate}
+   cmfIState=0;
+   cmfIvalue=1;
+
+   {fieldnumbers in map input}
+   cmfINPname = 0;
+   cmfINPbus = 1;
+   cmfINPmod = 2;
+   cmfINPport = 3;
+
+   {fieldnumbers in map function state}
+   cmfFState=0;
+   cmfFvalue=1;
+
+   {fieldnumbers in map functions}
+   cmfFUname = 0;
+   cmfFUbus = 1;
+   cmfFUmod = 2;
+   cmfFUport = 3;
+                   }
+ {fieldnumbers in rulefile }
+ Const
+   crfInpbus = 0;
+   crfInpmod = 1;
+   crfInpport = 2;
+   crfinpstate = 3;
+   crfoutpbus = 4;
+   crfoutpmodule = 5;
+   crfoutpport = 6;
+   crfoutpstate = 7;
+   crfhrstart = 8;
+   crfminstart = 9;
+   crfhrend = 10;
+   crfminend = 11;
+   crflpress = 12;
    {fieldnumbers in map inputstate}
    cmfIState=0;
    cmfIvalue=1;
@@ -300,41 +335,7 @@ begin
      activerulefile.dataset.Post;
      Populatetreeview(activerulefile,TreeView1,false,Combosorttype.text);
 
-      {fieldnumbers in rulefile
- Const
-   crfInpbus = 2;
-   crfInpmod = 3;
-   crfInpport = 4;
-   crfinpstate = 5;
-   crfoutpbus = 6;
-   crfoutpmodule = 7;
-   crfoutpport = 8;
-   crfoutpstate = 9;
-   crfhrstart = 10;
-   crfminstart = 11;
-   crfhrend = 12;
-   crfminend = 13;
-   crflpress = 15;
-   {fieldnumbers in map inputstate}
-   cmfIState=0;
-   cmfIvalue=1;
 
-   {fieldnumbers in map input}
-   cmfINPname = 0;
-   cmfINPbus = 1;
-   cmfINPmod = 2;
-   cmfINPport = 3;
-
-   {fieldnumbers in map function state}
-   cmfFState=0;
-   cmfFvalue=1;
-
-   {fieldnumbers in map functions}
-   cmfFUname = 0;
-   cmfFUbus = 1;
-   cmfFUmod = 2;
-   cmfFUport = 3;
-                   }
     end;
 end;
 
@@ -363,6 +364,36 @@ end;
 procedure TForm1.Button11Click(Sender: TObject);
 begin
    Formmapfileeditor.Visible:= not   Formmapfileeditor.Visible;
+end;
+
+procedure TForm1.Button12Click(Sender: TObject);
+var
+  sl:tstringlist;
+  a:string;
+begin
+  sl:=TStringList.Create;
+  activerulefile.dataset.First;
+  while not activerulefile.dataset.eof do
+  begin
+  a:=activerulefile.dataset.Fields[crfInpbus].asstring +';';
+  a:=a+activerulefile.dataset.Fields[crfInpmod].asstring +';';
+  a:=a+activerulefile.dataset.Fields[crfInpport].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfinpstate].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfoutpbus].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfoutpmodule].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfoutpport].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfoutpstate].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfhrstart].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfminstart].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfhrend].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crfminend].asstring +';';
+    a:=a+activerulefile.dataset.Fields[crflpress].asstring ;
+  sl.Add(a);
+  activerulefile.dataset.next;
+
+  end;
+  sl.SaveToFile('/home/johan/main.r');
+  sl.Destroy;
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
