@@ -14,13 +14,16 @@ uses
     { TArduinoFile }
 
     TArduinoFile = Class
-          constructor create(fname:string;data:string);
+          constructor create(fname:string;data:string); overload;
+          constructor create(fname:string); overload;
           destructor destroy;
   private
     { private declarations }
-     Filecontent:tstringlist;
+
+
 
   public
+      function addData(adata: string): boolean;
       function locateindataset(returnfieldindex:integer;SFidx:integer;Searchstring:string) :String; overload;
       function locateindataset(returnfieldindex:integer;SFidx1:integer;searchstring1:string;SFidx2:integer;searchstring2:string) :String; overload;
       function locateindataset(returnfieldindex:integer;SFidx1:integer;searchstring1:string;SFidx2:integer;searchstring2:string;SFidx3:integer;searchstring3:string) :String; overload;
@@ -30,8 +33,8 @@ uses
       Filename:String;
       datasource:TDataSource;
       dataset:TSdfDataSet;
-
-
+      ruledata:string;
+      Filecontent:tstringlist;
   end;
 implementation
 
@@ -42,12 +45,13 @@ var
   aStringStream:TStringStream;
   d:string;
 begin
+    Filecontent:=TStringList.Create;
      d:=data;
      datasource:=TDataSource.Create(nil);
      dataset:=TSdfDataSet.Create(nil);
      datasource.DataSet:=dataset;
-     dataset.Delimiter:=',';
-     try
+     dataset.Delimiter:=';';
+       try
      aStringStream:=TStringStream.Create(d);
      dataset.LoadFromStream(aStringStream);
      finally
@@ -60,6 +64,41 @@ begin
      end;
      filename:=fname;
 end;
+
+constructor TArduinoFile.create(fname: string);
+begin
+    Filecontent:=TStringList.Create;
+     datasource:=TDataSource.Create(nil);
+     dataset:=TSdfDataSet.Create(nil);
+     datasource.DataSet:=dataset;
+     dataset.Delimiter:=';';
+     filename:=fname;
+end;
+
+function TArduinoFile.addData(adata: string):boolean;
+var
+  aStringStream:TStringStream;
+begin
+    if aData='EOF' then
+    begin
+      try
+     aStringStream:=TStringStream.Create(TrimRight(ruledata));
+     dataset.LoadFromStream(aStringStream);
+     finally
+     aStringStream.Free;
+     end;
+     Try
+     dataset.Active:=true;
+     datasource.Enabled:=true;
+     finally
+     end;
+    end
+    else
+    ruledata:=ruledata+#13+#10;
+
+end;
+
+
 
 destructor TArduinoFile.destroy;
 begin

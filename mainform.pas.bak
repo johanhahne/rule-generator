@@ -46,7 +46,9 @@ type
     Button13: TButton;
     Button2: TButton;
     Button3: TButton;
+    Button4: TButton;
     Button5: TButton;
+    Button6: TButton;
     Button7: TButton;
     Button9: TButton;
     Button_delete: TButton;
@@ -99,6 +101,8 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure Button_deleteClick(Sender: TObject);
     procedure CombosorttypeChange(Sender: TObject);
@@ -120,20 +124,23 @@ type
     procedure fillcombos;
     procedure refreshFileListbox;
     function getArduinoFile(filename:string):TArduinoFile;
-    procedure setCurrentRulefile(filename:string);
+    function setCurrentRulefile(filename:string) :boolean;
     function checkMapFiles:boolean;
 
 
   private
     procedure addfieldtocombo(dataset: tdataset; fieldindex: integer;
       combobox: TComboBox);
+    procedure addrowtofile(filename, data: string);
     function checkarduinofiles(filename: string): boolean;
     procedure fillListFilesOnSD(Adata: String);
     procedure fill_inp_map_combos(mapfile: TArduinoFile);
     procedure ParseInputSerialData(Adata: string);
     procedure recievedata(data: string);
+    function SendFileToArduino(arduinofile: TArduinoFile): boolean;
     procedure SendSerialData(Header, data: string);
     procedure populatelist(listbox:TListBox;dataset:TDataSet;fldidx:integer);
+    procedure SerialMonitorDebugMessage(aData: string);
 
     { private declarations }
   public
@@ -160,8 +167,7 @@ var
 implementation
 
 {$R *.lfm}
-
- {fieldnumbers in rulefile }
+   {fieldnumbers in rulefile
  Const
    crfInpbus = 2;
    crfInpmod = 3;
@@ -176,6 +182,41 @@ implementation
    crfhrend = 12;
    crfminend = 13;
    crflpress = 15;
+   {fieldnumbers in map inputstate}
+   cmfIState=0;
+   cmfIvalue=1;
+
+   {fieldnumbers in map input}
+   cmfINPname = 0;
+   cmfINPbus = 1;
+   cmfINPmod = 2;
+   cmfINPport = 3;
+
+   {fieldnumbers in map function state}
+   cmfFState=0;
+   cmfFvalue=1;
+
+   {fieldnumbers in map functions}
+   cmfFUname = 0;
+   cmfFUbus = 1;
+   cmfFUmod = 2;
+   cmfFUport = 3;
+                   }
+ {fieldnumbers in rulefile }
+ Const
+   crfInpbus = 0;
+   crfInpmod = 1;
+   crfInpport = 2;
+   crfinpstate = 3;
+   crfoutpbus = 4;
+   crfoutpmodule = 5;
+   crfoutpport = 6;
+   crfoutpstate = 7;
+   crfhrstart = 8;
+   crfminstart = 9;
+   crfhrend = 10;
+   crfminend = 11;
+   crflpress = 12;
    {fieldnumbers in map inputstate}
    cmfIState=0;
    cmfIvalue=1;
@@ -301,50 +342,14 @@ begin
      activerulefile.dataset.Post;
      Populatetreeview(activerulefile,TreeView1,false,Combosorttype.text);
 
-      {fieldnumbers in rulefile
- Const
-   crfInpbus = 2;
-   crfInpmod = 3;
-   crfInpport = 4;
-   crfinpstate = 5;
-   crfoutpbus = 6;
-   crfoutpmodule = 7;
-   crfoutpport = 8;
-   crfoutpstate = 9;
-   crfhrstart = 10;
-   crfminstart = 11;
-   crfhrend = 12;
-   crfminend = 13;
-   crflpress = 15;
-   {fieldnumbers in map inputstate}
-   cmfIState=0;
-   cmfIvalue=1;
 
-   {fieldnumbers in map input}
-   cmfINPname = 0;
-   cmfINPbus = 1;
-   cmfINPmod = 2;
-   cmfINPport = 3;
-
-   {fieldnumbers in map function state}
-   cmfFState=0;
-   cmfFvalue=1;
-
-   {fieldnumbers in map functions}
-   cmfFUname = 0;
-   cmfFUbus = 1;
-   cmfFUmod = 2;
-   cmfFUport = 3;
-                   }
     end;
 end;
 
 procedure TForm1.recievedata(data: string);
 begin
-      FrmSerialMonitor.Memo1.lines.add(data) ;
-      FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
-      FrmSerialMonitor.Memo1.SelLength:=0;
-      FrmSerialMonitor.Memo1.SetFocus;
+
+      ParseInputSerialData(data);
 //          if pos('mapbutton',data) > 0 then
  //     identifyTriggerInput(data);
 
@@ -450,6 +455,54 @@ begin
   ShowMessage('Rule saved');
 end;
 
+procedure TForm1.Button4Click(Sender: TObject);
+begin
+  ConnectionsAndStuff.SendMessage(3,'');
+end;
+
+procedure TForm1.Button6Click(Sender: TObject);
+var
+  i:integer;
+  sl:tstringlist;
+  st:TStream;
+begin
+    SendFileToArduino(ismap);
+    SendFileToArduino(fsmap);
+    SendFileToArduino(functionmapfile);
+    SendFileToArduino(inputmapfile);
+    for i := 0 to Arduinorulefiles.Count -1 do
+        begin
+           SendFileToArduino(TArduinoFile(Arduinorulefiles[i]));
+        end;
+
+
+end;
+
+function TForm1.SendFileToArduino(arduinofile:TArduinoFile):boolean;
+var
+  i:integer;
+  OutString:string;
+  sl:tstringlist;
+  st:TMemoryStream;
+begin
+ arduinofile.dataset.first;
+  ConnectionsAndStuff.SendMessage(2,arduinofile.Filename);
+  while not arduinofile.dataset.eof do
+  begin
+    OutString:= arduinofile.dataset.Fields[0].AsString;
+    for i := 1 to arduinofile.dataset.FieldCount-1 do
+        begin
+          OutString:= OutString+';'+arduinofile.dataset.Fields[i].AsString;
+        end;
+   ConnectionsAndStuff.SendMessage(6,arduinofile.Filename+','+ OutString);
+   Sleep(150);
+    arduinofile.dataset.Next;
+
+  end;
+
+
+end;
+
 function TForm1.checkarduinofiles(filename:string):boolean;
 var
   i:integer;
@@ -481,25 +534,25 @@ begin
    begin
    sl:=TStringList.Create;
    sl.LoadFromFile(OpenDialog1.FileName);
-   if ExtractFileName(OpenDialog1.FileName) = 'istate.m' then
+   if uppercase(ExtractFileName(OpenDialog1.FileName)) = uppercase('istate.m') then
    begin
         if Assigned(ismap) then FreeAndNil(ismap);
         ismap := TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
    end
    else
-   if ExtractFileName(OpenDialog1.FileName) = 'inp.m' then
+   if uppercase(ExtractFileName(OpenDialog1.FileName)) = uppercase('inp.m') then
    begin
         if Assigned(inputmapfile) then FreeAndNil(inputmapfile);
         inputmapfile := TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
    end
    else
-   if ExtractFileName(OpenDialog1.FileName) = 'fstate.m' then
+   if uppercase(ExtractFileName(OpenDialog1.FileName)) = uppercase('fstate.m') then
    begin
         if Assigned(fsmap) then FreeAndNil(fsmap);
         fsmap := TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
    end
    else
-   if ExtractFileName(OpenDialog1.FileName) = 'func.m' then
+   if uppercase(ExtractFileName(OpenDialog1.FileName)) = uppercase('func.m') then
    begin
         if Assigned(functionmapfile) then FreeAndNil(functionmapfile);
         functionmapfile := TArduinoFile.create(ExtractFileName(OpenDialog1.FileName),sl.Text);
@@ -636,24 +689,24 @@ begin
   Panel_treeview.Visible:=false;
   Panel_dbgrid.Visible:=true;
 
-  if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'istate.m' then
+  if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'ISTATE.M' then
   begin
   DBGrid1.DataSource:=ismap.datasource;
           Panel_input_map.Visible:=false;
   end;
-    if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'inp.m' then
+    if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'INP.M' then
     begin
          fill_inp_map_combos(inputmapfile);
                  Panel_input_map.Visible:=true;
          DBGrid1.DataSource:=inputmapfile.datasource;
     end;
-      if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'fstate.m' then
+      if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'FSTATE.M' then
       begin
         DBGrid1.DataSource:=fsmap.datasource;
                 Panel_input_map.Visible:=false;
         end;
 
-        if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'func.m' then
+        if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'FUNC.M' then
         begin
 
         fill_inp_map_combos(functionmapfile);
@@ -906,7 +959,7 @@ ComboSmin.Clear;
 ComboShr.Clear;
 ComboEhr.Clear;
 ComboEmin.Clear;
-
+ IF Assigned(fsmap) then
 while not fsmap.dataset.EOF do
       begin
          //  comboFuncState.AddItem(fsmap.dataset.Fields[cmfFUname].asstring,nil);
@@ -948,9 +1001,13 @@ for i := 0 to 23 do
  frmnewrule.ComboSmin.text:='00';
  frmnewrule.Comboemin.text:='00';
  frmnewrule.ComboLongPress.text:='0';
+if Assigned(ismap) then
 addfieldtocombo(ismap.dataset,cmfIState,frmnewrule.Comboinputstate);
+if Assigned(fsmap) then
 addfieldtocombo(fsmap.dataset,cmfFState,frmnewrule.comboFuncState);
+if Assigned(functionmapfile) then
 addfieldtocombo(functionmapfile.dataset,cmfFUname,frmnewrule.Combofunction);
+if Assigned(inputmapfile) then
 addfieldtocombo(inputmapfile.dataset,cmfINPname,frmnewrule.Comboinput);
 
 
@@ -993,18 +1050,29 @@ end;
 function TForm1.getArduinoFile(filename: string): TArduinoFile;
 var
 i:integer;
+found:boolean;
+r:TArduinoFile;
 begin
+found:=false;
 for i := 0 to Arduinorulefiles.Count -1 do
     begin
          if TArduinoFile(Arduinorulefiles.items[i]).Filename = filename then
            begin
            result:=TArduinoFile(Arduinorulefiles.items[i]);
+           found:=true;
            break;
            end;
     end;
+if found = false then
+   begin
+   r:=TArduinoFile.create(filename);
+   Arduinorulefiles.Add(r);
+   Result:= getArduinoFile(filename);
+   end;
+
 end;
 
-procedure TForm1.setCurrentRulefile(filename:string);
+function TForm1.setCurrentRulefile(filename:string):boolean;
 begin
  activerulefile:= getArduinoFile(filename);
  Populatetreeview(activerulefile,TreeView1,true,Combosorttype.text);
@@ -1070,16 +1138,102 @@ strlst.StrictDelimiter:=true;
 strlst.DelimitedText:=Adata;
 try
    case strlst[0] of
-       '6' : fillListFilesOnSD(strlst[1]);
-      // '2' : identifyTriggerInput(strlst);
+       '06' :  addrowtofile(strlst[1],strlst[2]);
+       '01' : SerialMonitorDebugMessage(strlst[1]);
    end;
 
 finally
 FreeAndNil(strlst);
 
+
+
+
+
 end;
 end;
 
+procedure TForm1.SerialMonitorDebugMessage(aData:string);
+begin
+   FrmSerialMonitor.Memo1.lines.add(adata) ;
+   FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
+   FrmSerialMonitor.Memo1.SelLength:=0;
+   FrmSerialMonitor.Memo1.SetFocus;
+end;
+
+
+procedure tform1.addrowtofile(filename,data:string);
+var
+a:TArduinoFile;
+test:string;
+begin
+
+  if filename = 'ISTATE.M' then
+  begin
+       if not Assigned(ismap) then
+       begin
+       ismap := TArduinoFile.create(filename)
+       end;
+       a:=ismap
+  end
+  else
+  if filename = 'FSTATE.M' then
+  begin
+       if not Assigned(fsmap) then
+       begin
+       fsmap := TArduinoFile.create(filename);
+
+       end;
+       a:=fsmap
+  end
+  else
+  if filename = 'FUNC.M' then
+  begin
+       if not Assigned(functionmapfile) then
+       begin
+       functionmapfile := TArduinoFile.create(filename);
+
+       end;
+       a:=functionmapfile
+  end
+  else
+  if filename = 'INP.M' then
+  begin
+       if not Assigned(inputmapfile) then
+       begin
+       inputmapfile := TArduinoFile.create(filename);
+       end;
+       a:=inputmapfile
+  end
+  else
+  a:=getArduinoFile(filename);
+
+if a <> nil then
+   begin
+
+        if data='EOF' then
+        begin
+         a.addData(data);
+
+         if copy(filename,Length(filename)-1,2)='.R' then
+         begin
+            setCurrentRulefile(filename);
+            listbox_files_on_sd.AddItem(filename,nil);
+         end
+         else
+          begin
+          fillcombos;
+          ListBox_mapfiles.AddItem(filename,nil);
+          end;
+        end
+        else
+         a.addData(data);
+
+
+
+   end;
+
+
+end;
 
 procedure TForm1.fillListFilesOnSD(Adata:String);
 var

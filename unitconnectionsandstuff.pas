@@ -24,9 +24,11 @@ type
   private
       FReceiveData : TReceiveData;
        serialdata:string;
+
     { private declarations }
   public
     { public declarations }
+    procedure SendMessage(Msgtype: integer; MsgData: string);
     published
     property ReceiveData:TReceiveData read FReceiveData write FReceiveData ;
 
@@ -66,21 +68,27 @@ epos := Pos('#', serialdata);
     //  begin
     if  trim(Copy(serialdata, spos + 5, epos-(spos + 5))) <> '' then
        if Assigned(FReceiveData) then FReceiveData(trim(Copy(serialdata, spos + 5, epos-(spos + 5))));
-
-
-
-
        serialdata := Copy(serialdata, epos+1 , Length(serialdata));
     //  end;
+ end;
+end;
+ procedure TConnectionsAndStuff.SendMessage(Msgtype:integer;MsgData:string);
+ var
+ mess,messtype:string;
 
-
-
+ i:integer;
+ begin
+ if Msgtype < 10 then
+    messtype:='0'+IntToStr(Msgtype)
+    else
+      messtype:=IntToStr(Msgtype) ;
+mess:='!0000,'+messtype+','+MsgData+'#';
+ if SdpoSerial1.Active then
+    begin
+      SdpoSerial1.WriteData(mess);
+    end;
 
  end;
-
-
-
-end;
 
 end.
 

@@ -1,12 +1,12 @@
 object Form1: TForm1
-  Left = 4496
-  Height = 992
-  Top = 2
-  Width = 1204
+  Left = 348
+  Height = 762
+  Top = 170
+  Width = 1041
   BorderStyle = bsNone
   Caption = 'Rule Creator'
-  ClientHeight = 992
-  ClientWidth = 1204
+  ClientHeight = 762
+  ClientWidth = 1041
   Menu = MainMenu1
   OnCreate = FormCreate
   LCLVersion = '1.6.0.4'
@@ -22,12 +22,12 @@ object Form1: TForm1
     TabOrder = 0
   end
   object Panel1: TPanel
-    Left = 1071
-    Height = 848
+    Left = 908
+    Height = 618
     Top = 144
     Width = 133
     Align = alRight
-    ClientHeight = 848
+    ClientHeight = 618
     ClientWidth = 133
     TabOrder = 1
     object Button5: TButton
@@ -77,10 +77,28 @@ object Form1: TForm1
       Caption = 'Sync time'
       TabOrder = 4
     end
+    object Button4: TButton
+      Left = 24
+      Height = 25
+      Top = 176
+      Width = 75
+      Caption = 'Button4'
+      OnClick = Button4Click
+      TabOrder = 5
+    end
+    object Button6: TButton
+      Left = 24
+      Height = 25
+      Top = 208
+      Width = 75
+      Caption = 'Button6'
+      OnClick = Button6Click
+      TabOrder = 6
+    end
   end
   object Splitter1: TSplitter
-    Left = 1064
-    Height = 848
+    Left = 901
+    Height = 618
     Top = 144
     Width = 7
     Align = alRight
@@ -106,10 +124,10 @@ object Form1: TForm1
     Left = 0
     Height = 144
     Top = 0
-    Width = 1204
+    Width = 1041
     Align = alTop
     ClientHeight = 144
-    ClientWidth = 1204
+    ClientWidth = 1041
     TabOrder = 3
     object Panel8: TPanel
       Left = 16
@@ -242,29 +260,29 @@ object Form1: TForm1
   end
   object Panel2: TPanel
     Left = 0
-    Height = 848
+    Height = 618
     Top = 144
-    Width = 1064
+    Width = 901
     Align = alClient
     Caption = 'Panel2'
-    ClientHeight = 848
-    ClientWidth = 1064
+    ClientHeight = 618
+    ClientWidth = 901
     TabOrder = 4
     object Panel_treeview: TPanel
       Left = 1
-      Height = 846
+      Height = 616
       Top = 1
-      Width = 1062
+      Width = 899
       Align = alClient
       Caption = 'Panel_treeview'
-      ClientHeight = 846
-      ClientWidth = 1062
+      ClientHeight = 616
+      ClientWidth = 899
       TabOrder = 0
       object TreeView1: TTreeView
         Left = 1
-        Height = 794
+        Height = 564
         Top = 51
-        Width = 1060
+        Width = 897
         Align = alClient
         ReadOnly = True
         TabOrder = 0
@@ -275,10 +293,10 @@ object Form1: TForm1
         Left = 1
         Height = 50
         Top = 1
-        Width = 1060
+        Width = 897
         Align = alTop
         ClientHeight = 50
-        ClientWidth = 1060
+        ClientWidth = 897
         TabOrder = 2
         object Combosorttype: TComboBox
           Left = 8
@@ -297,7 +315,7 @@ object Form1: TForm1
           Text = 'function'
         end
         object Button_delete: TButton
-          Left = 889
+          Left = 726
           Height = 25
           Top = 20
           Width = 75
@@ -307,7 +325,7 @@ object Form1: TForm1
           TabOrder = 1
         end
         object ButNewRule: TButton
-          Left = 969
+          Left = 806
           Height = 25
           Top = 20
           Width = 75
@@ -318,7 +336,7 @@ object Form1: TForm1
         end
       end
       object pnlcombos: TPanel
-        Left = 689
+        Left = 526
         Height = 64
         Top = 56
         Width = 354
@@ -471,22 +489,23 @@ object Form1: TForm1
     end
     object Panel_dbgrid: TPanel
       Left = 1
-      Height = 846
+      Height = 616
       Top = 1
-      Width = 1062
+      Width = 899
       Align = alClient
       Caption = 'Panel_dbgrid'
-      ClientHeight = 846
-      ClientWidth = 1062
+      ClientHeight = 616
+      ClientWidth = 899
       TabOrder = 1
       object DBGrid1: TDBGrid
         Left = 1
-        Height = 801
+        Height = 571
         Top = 44
-        Width = 1060
+        Width = 897
         Align = alClient
         Color = clWindow
         Columns = <>
+        DataSource = DataSource1
         TabOrder = 0
         OnKeyDown = DBGrid1KeyDown
       end
@@ -494,10 +513,10 @@ object Form1: TForm1
         Left = 1
         Height = 43
         Top = 1
-        Width = 1060
+        Width = 897
         Align = alTop
         ClientHeight = 43
-        ClientWidth = 1060
+        ClientWidth = 897
         TabOrder = 1
         object combo_bus: TComboBox
           Left = 696
@@ -541,6 +560,7 @@ object Form1: TForm1
           Top = 1
           Width = 96
           Caption = 'add as new'
+          OnClick = Button2Click
           TabOrder = 4
         end
       end
@@ -569,138 +589,29 @@ object Form1: TForm1
   object SdfDataSet1: TSdfDataSet
     FileMustExist = True
     ReadOnly = False
-    FileName = '/home/johan/git/rule-generator/reglerodesberga.rules'
+    FileName = '/home/johan/git/rule-generator/istate.m'
     Schema.Strings = (
-      'Field1'
-      'Field2'
-      'Field3'
-      'Field4'
-      'Field5'
-      'Field6'
-      'Field7'
-      'Field8'
-      'Field9'
-      'Field10'
-      'Field11'
-      'Field12'
-      'Field13'
-      'Field14'
-      'Field15'
-      'Field16'
-      'Field17'
-      'Field18'
+      'field'
+      'value'
+      ''
     )
     FieldDefs = <    
       item
-        Name = 'Field1'
+        Name = 'field'
         DataType = ftString
         Precision = -1
-        Size = 120
+        Size = 7
       end    
       item
-        Name = 'Field2'
+        Name = 'value'
         DataType = ftString
         Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field3'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field4'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field5'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field6'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field7'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field8'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field9'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field10'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field11'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field12'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field13'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field14'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field15'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field16'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field17'
-        DataType = ftString
-        Precision = -1
-        Size = 120
-      end    
-      item
-        Name = 'Field18'
-        DataType = ftString
-        Precision = -1
-        Size = 120
+        Size = 7
       end>
+    Active = True
+    AutoCalcFields = False
     AllowMultiLine = True
-    Delimiter = ','
+    Delimiter = ';'
     FirstLineAsSchema = False
     StripTrailingDelimiters = False
     left = 920
