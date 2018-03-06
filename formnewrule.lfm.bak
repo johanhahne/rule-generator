@@ -18,9 +18,9 @@ object frmnewrule: Tfrmnewrule
     TabOrder = 0
   end
   object Comboinput: TComboBox
-    Left = 8
+    Left = 11
     Height = 34
-    Top = 32
+    Top = 88
     Width = 192
     ItemHeight = 0
     TabOrder = 1
@@ -38,7 +38,7 @@ object frmnewrule: Tfrmnewrule
   object Combofunction: TComboBox
     Left = 8
     Height = 34
-    Top = 88
+    Top = 32
     Width = 192
     ItemHeight = 0
     TabOrder = 3

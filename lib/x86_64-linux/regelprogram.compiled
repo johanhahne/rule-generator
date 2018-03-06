@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Compiler Value="/usr/bin/fpc" Date="1472871900"/>
-  <Params Value=" -MObjFPC -Scghi -Cg -O1 -g -gl -l -vewnhibq -Fi/home/johan/git/rule-generator/lib/x86_64-linux -Fl/opt/gnome/lib -Fu/home/johan/Dokument/indy-10.2.0.3/fpc -Fu/home/johan/Hämtningar/SdpoSerial/lib/x86_64-linux -Fu/usr/lib/lazarus/1.6/components/sdf/lib/x86_64-linux/gtk2 -Fu/usr/lib/lazarus/1.6/lcl/units/x86_64-linux/gtk2 -Fu/usr/lib/lazarus/1.6/lcl/units/x86_64-linux -Fu/usr/lib/lazarus/1.6/components/lazutils/lib/x86_64-linux -Fu/usr/lib/lazarus/1.6/packager/units/x86_64-linux -Fu/home/johan/git/rule-generator/ -FU/home/johan/git/rule-generator/lib/x86_64-linux/ -dUseCThreads -dLCL -dLCLgtk2 regelprogram.lpr"/>
+  <Compiler Value="/usr/bin/fpc" Date="1491731098"/>
+  <Params Value=" -MObjFPC -Scghi -Cg -O1 -g -gl -l -vewnhibq -Fi/home/johan/git/rule-generator/lib/x86_64-linux -Fl/opt/gnome/lib -Fu/home/johan/Dokument/indy-10.2.0.3/fpc -Fu/home/johan/git/rule-generator/lib/x86_64-linux -Fu/home/johan/Hämtningar/SdpoSerial/lib/x86_64-linux -Fu/usr/lib/lazarus/1.6.4/components/sdf/lib/x86_64-linux/gtk2 -Fu/usr/lib/lazarus/1.6.4/lcl/units/x86_64-linux/gtk2 -Fu/usr/lib/lazarus/1.6.4/lcl/units/x86_64-linux -Fu/usr/lib/lazarus/1.6.4/components/lazutils/lib/x86_64-linux -Fu/usr/lib/lazarus/1.6.4/packager/units/x86_64-linux -Fu/home/johan/git/rule-generator/ -FU/home/johan/git/rule-generator/lib/x86_64-linux/ -dUseCThreads -dLCL -dLCLgtk2 regelprogram.lpr"/>
 </CONFIG>

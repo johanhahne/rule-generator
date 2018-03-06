@@ -1,10 +1,10 @@
 object ConnectionsAndStuff: TConnectionsAndStuff
   OnCreate = DataModuleCreate
   OldCreateOrder = False
-  Height = 150
-  HorizontalOffset = 1718
-  VerticalOffset = 232
-  Width = 150
+  Height = 234
+  HorizontalOffset = 1353
+  VerticalOffset = 129
+  Width = 559
   object SdpoSerial1: TSdpoSerial
     Active = False
     BaudRate = br___300
@@ -16,6 +16,12 @@ object ConnectionsAndStuff: TConnectionsAndStuff
     Device = '/dev/ttyS0'
     OnRxData = SdpoSerial1RxData
     left = 64
+    top = 48
+  end
+  object rcvTimer: TTimer
+    Interval = 200
+    OnTimer = rcvTimerTimer
+    left = 136
     top = 48
   end
 end

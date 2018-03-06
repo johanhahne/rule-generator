@@ -1,7 +1,7 @@
 object frmnewrule: Tfrmnewrule
-  Left = 5110
+  Left = 427
   Height = 215
-  Top = 393
+  Top = 282
   Width = 374
   BorderStyle = bsSizeToolWin
   Caption = 'New rule'

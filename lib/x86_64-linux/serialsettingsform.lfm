@@ -1,56 +1,107 @@
 object frmSerialSettings: TfrmSerialSettings
-  Left = 1470
-  Height = 174
-  Top = 185
-  Width = 247
+  Left = 1224
+  Height = 198
+  Top = 148
+  Width = 244
   BorderStyle = bsSingle
   Caption = 'Serial Settings'
-  ClientHeight = 174
-  ClientWidth = 247
+  ClientHeight = 198
+  ClientWidth = 244
   OnCreate = FormCreate
   OnShow = FormShow
-  LCLVersion = '1.6.0.4'
-  object Combo_serialSpeed: TComboBox
-    Left = 8
-    Height = 29
-    Top = 29
-    Width = 232
-    ItemHeight = 0
-    ItemIndex = 2
-    Items.Strings = (
-      '4800'
-      '9600'
-      '57600'
-      '115200'
-    )
-    TabOrder = 0
-    Text = '57600'
-  end
-  object Combo_serial_ports: TComboBox
-    Left = 8
-    Height = 29
-    Top = 72
-    Width = 232
-    ItemHeight = 0
-    TabOrder = 1
-    Text = 'Combo_serial_ports'
-  end
+  LCLVersion = '1.6.4.0'
   object Button1: TButton
-    Left = 165
+    Left = 160
     Height = 25
-    Top = 136
+    Top = 160
     Width = 75
     Caption = 'Ok'
     OnClick = Button1Click
-    TabOrder = 2
+    TabOrder = 0
   end
   object Button2: TButton
     Left = 8
     Height = 25
-    Top = 136
+    Top = 152
     Width = 75
     Caption = 'Cancel'
     OnClick = Button2Click
+    TabOrder = 1
+  end
+  object combo_connection_type: TComboBox
+    Left = 8
+    Height = 34
+    Top = 16
+    Width = 232
+    ItemHeight = 0
+    ItemIndex = 0
+    Items.Strings = (
+      'Serial'
+      'Network'
+    )
+    OnChange = combo_connection_typeChange
+    TabOrder = 2
+    Text = 'Serial'
+  end
+  object Panel_serial: TPanel
+    Left = 8
+    Height = 88
+    Top = 56
+    Width = 232
+    Caption = 'Panel_serial'
+    ClientHeight = 88
+    ClientWidth = 232
     TabOrder = 3
+    object Combo_serialSpeed: TComboBox
+      Left = 0
+      Height = 34
+      Top = 8
+      Width = 232
+      ItemHeight = 0
+      ItemIndex = 2
+      Items.Strings = (
+        '4800'
+        '9600'
+        '57600'
+        '115200'
+      )
+      TabOrder = 0
+      Text = '57600'
+    end
+    object Combo_serial_ports: TComboBox
+      Left = 0
+      Height = 34
+      Top = 48
+      Width = 232
+      ItemHeight = 0
+      TabOrder = 1
+      Text = 'Combo_serial_ports'
+    end
+  end
+  object Panel_network: TPanel
+    Left = 8
+    Height = 86
+    Top = 64
+    Width = 232
+    ClientHeight = 86
+    ClientWidth = 232
+    TabOrder = 4
+    Visible = False
+    object Edit1: TEdit
+      Left = 5
+      Height = 34
+      Top = 32
+      Width = 91
+      TabOrder = 0
+      Text = '192.168.1.2'
+    end
+    object Edit2: TEdit
+      Left = 96
+      Height = 34
+      Top = 32
+      Width = 56
+      TabOrder = 1
+      Text = '9091'
+    end
   end
 end

@@ -93,6 +93,7 @@ type
     Splitter1: TSplitter;
     TreeView1: TTreeView;
     procedure btnconnectserialClick(Sender: TObject);
+    procedure btnTestRuleClick(Sender: TObject);
     procedure ButNewRuleClick(Sender: TObject);
 
     procedure Button10Click(Sender: TObject);
@@ -102,6 +103,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure Button_deleteClick(Sender: TObject);
@@ -137,10 +139,12 @@ type
     procedure fill_inp_map_combos(mapfile: TArduinoFile);
     procedure ParseInputSerialData(Adata: string);
     procedure recievedata(data: string);
+    procedure selectMappedButton(aString: string);
     function SendFileToArduino(arduinofile: TArduinoFile): boolean;
     procedure SendSerialData(Header, data: string);
     procedure populatelist(listbox:TListBox;dataset:TDataSet;fldidx:integer);
     procedure SerialMonitorDebugMessage(aData: string);
+    procedure viewPortStatus(bus, module, data: String);
 
     { private declarations }
   public
@@ -244,28 +248,25 @@ implementation
 
 procedure TForm1.btnconnectserialClick(Sender: TObject);
 begin
-       if connectionsandstuff.SdpoSerial1.Active then
+       if connectionsandstuff.connectionActive then
        begin
-         connectionsandstuff.SdpoSerial1.Active := false;
+            ConnectionsAndStuff.ConnectionDisConnect;
          btnconnectserial.Caption:='Connect';
        end
        else
        begin
             if frmSerialSettings.ShowModal=mrOK then
           begin
-            if connectionsandstuff.SdpoSerial1.Active then connectionsandstuff.SdpoSerial1.active:=false;
-           case frmSerialSettings.Combo_serialSpeed.text of
-               '4800': connectionsandstuff.SdpoSerial1.BaudRate:=br__4800 ;
-               '9600': connectionsandstuff.SdpoSerial1.BaudRate:=br__9600 ;
-               '57600': connectionsandstuff.SdpoSerial1.BaudRate:=br_57600;
-               '115200': connectionsandstuff.SdpoSerial1.BaudRate:=br115200 ;
-          end;
-            connectionsandstuff.SdpoSerial1.Device:=frmSerialSettings.Combo_serial_ports.Text;
-           try
-           connectionsandstuff.SdpoSerial1.Active:=true;
 
-           finally
-           if connectionsandstuff.SdpoSerial1.Active then
+
+           if frmSerialSettings.combo_connection_type.Text='Serial'
+           then
+           connectionsandstuff.ConnectionConnect(frmSerialSettings.Combo_serialSpeed.Text,frmSerialSettings.Combo_serial_ports.Text)
+           else
+           connectionsandstuff.ConnectionConnect(frmSerialSettings.Edit1.Text,strtoint(frmSerialSettings.edit2.Text)) ;
+
+
+           if connectionsandstuff.connectionActive then
              begin
                   FrmSerialMonitor.Memo1.lines.Clear;
                   btnconnectserial.Caption:='Connected';
@@ -273,11 +274,16 @@ begin
                  ConnectionsAndStuff.ReceiveData:=@recievedata;
               //    ConnectionsAndStuff.SdpoSerial1.OnRxData:=SdpoSerial1RxData;
              end;
-           end;
+
 
           end;
        end;
  end;
+
+procedure TForm1.btnTestRuleClick(Sender: TObject);
+begin
+  connectionsandstuff.SdpoSerial1.WriteData('!0000,20,'+activerulefile.dataset.Fields[crfInpport].asstring+','+activerulefile.dataset.Fields[crfinpstate].asstring+','+activerulefile.dataset.Fields[crflpress].asstring+',main.r'+'#');
+end;
 
 procedure TForm1.ButNewRuleClick(Sender: TObject);
 var
@@ -412,34 +418,38 @@ var
   r:TArduinoFile;
 begin
 
-  sl:=TStringList.Create;
-sl.LoadFromFile('/home/johan/git/rule-generator/functionmap');
-functionmapfile:=TArduinoFile.create('functionmap',sl.Text);
- sl.Destroy;
- sl:=TStringList.Create;
- sl.LoadFromFile('/home/johan/git/rule-generator/functionstatemap');
- fsmap:=TArduinoFile.create('fsmap',sl.Text);
-  sl.Destroy;
-
-//sl:=TStringList.Create;
-//sl.LoadFromFile('/home/johan/git/rule-generator/reglerodesberga.rules');
-
-//r:=TArduinoFile.create('rulefile.r',sl.Text);
-
-//Arduinorulefiles.Add(r);
-
-// sl.Destroy;
- //DBGrid3.DataSource:=rulefile.datasource;
-sl:=TStringList.Create;
-sl.LoadFromFile('/home/johan/git/rule-generator/inputmap');
-inputmapfile:=TArduinoFile.create('rulefile',sl.Text);
- sl.Destroy;
-  sl:=TStringList.Create;
- sl.LoadFromFile('/home/johan/git/rule-generator/inputstatemap');
- ismap:=TArduinoFile.create('rulefile',sl.Text);
-  sl.Destroy;
-
-
+     if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'INP.M' then
+     begin
+      if (combo_bus.Text<>'') and (Combo_mod.Text<>'') and (Combo_port.Text<>'') and (Combo_name.Text<>'') then
+         begin
+              inputmapfile.dataset.Insert;
+              inputmapfile.dataset.Fields[cmfINPbus].AsString:=Combo_bus.Text;
+              inputmapfile.dataset.Fields[cmfINPmod].AsString:=Combo_mod.Text;
+              inputmapfile.dataset.Fields[cmfINPport].AsString:=Combo_port.Text;
+              inputmapfile.dataset.Fields[cmfINPname].AsString:=Combo_name.Text;
+              inputmapfile.dataset.Post;
+         end
+         else
+         begin
+         ShowMessage('Enter all values first');
+         end;
+     end;
+     if ListBox_mapfiles.Items[ListBox_mapfiles.ItemIndex] = 'FUNC.M' then
+     begin
+      if (combo_bus.Text<>'') and (Combo_mod.Text<>'') and (Combo_port.Text<>'') and (Combo_name.Text<>'') then
+         begin
+              functionmapfile.dataset.Insert;
+              functionmapfile.dataset.Fields[cmfINPbus].AsString:=Combo_bus.Text;
+              functionmapfile.dataset.Fields[cmfINPmod].AsString:=Combo_mod.Text;
+              functionmapfile.dataset.Fields[cmfINPport].AsString:=Combo_port.Text;
+              functionmapfile.dataset.Fields[cmfINPname].AsString:=Combo_name.Text;
+              functionmapfile.dataset.Post;
+         end
+         else
+         begin
+         ShowMessage('Enter all values first');
+         end;
+     end;
 
 end;
 
@@ -458,6 +468,12 @@ end;
 procedure TForm1.Button4Click(Sender: TObject);
 begin
   ConnectionsAndStuff.SendMessage(3,'');
+end;
+
+procedure TForm1.Button5Click(Sender: TObject);
+begin
+//  connectionsandstuff.SdpoSerial1.WriteData('!0000,5#');
+  ConnectionsAndStuff.SendMessage(5,'');
 end;
 
 procedure TForm1.Button6Click(Sender: TObject);
@@ -1137,9 +1153,10 @@ strlst.Delimiter:=',';
 strlst.StrictDelimiter:=true;
 strlst.DelimitedText:=Adata;
 try
-   case strlst[0] of
-       '06' :  addrowtofile(strlst[1],strlst[2]);
-       '01' : SerialMonitorDebugMessage(strlst[1]);
+   case strlst[1] of
+       '06' :  addrowtofile(strlst[2],strlst[3]);
+       '01' : SerialMonitorDebugMessage(strlst[2]);
+       '22' :viewPortStatus(strlst[2],strlst[3],strlst[4]);
    end;
 
 finally
@@ -1151,6 +1168,26 @@ FreeAndNil(strlst);
 
 end;
 end;
+procedure TForm1.viewPortStatus(bus,module,data:String) ;
+var
+i:integer;
+c: Char;
+begin
+     FrmSerialMonitor.Memo1.lines.add('Bus:'+bus +'  Module:'+module) ;
+     i:=1;
+    for c in data do
+        begin
+          FrmSerialMonitor.Memo1.lines.add('Port '+ IntToStr(i)+':' +c) ;
+          inc(i);
+        end;
+
+
+
+   FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
+   FrmSerialMonitor.Memo1.SelLength:=0;
+   FrmSerialMonitor.Memo1.SetFocus;
+end;
+
 
 procedure TForm1.SerialMonitorDebugMessage(aData:string);
 begin
@@ -1158,8 +1195,28 @@ begin
    FrmSerialMonitor.Memo1.SelStart:=length(FrmSerialMonitor.Memo1.text);
    FrmSerialMonitor.Memo1.SelLength:=0;
    FrmSerialMonitor.Memo1.SetFocus;
-end;
+   if pos('mapbutton',adata) > 0 then
+   selectMappedButton(aData);
 
+end;
+procedure tform1.selectMappedButton(aString:string);
+var
+sl:tstringlist;
+a,s:string;
+begin
+sl:=TStringList.Create;
+sl.Delimiter:=';';
+sl.StrictDelimiter:=true;
+sl.DelimitedText:=aString;
+s:=inputmapfile.locateindataset(cmfINPname,cmfINPbus,sl[1],cmfINPmod,sl[2],cmfINPport,sl[3]);
+combo_bus.text:=sl[1];
+Combo_mod.text:=sl[2];
+Combo_port.text:=sl[3];
+if s <> '' then
+   FormNewRule.frmnewrule.Comboinput.Text:=s;
+sl.Destroy;
+
+end;
 
 procedure tform1.addrowtofile(filename,data:string);
 var

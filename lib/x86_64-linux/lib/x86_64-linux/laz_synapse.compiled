@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="/usr/bin/fpc" Date="1491731098"/>
+  <Params Value=" -MObjFPC -Scghi -Cg -O1 -g -gl -l -vewnhibq -Fu/usr/lib/lazarus/1.6.4/packager/units/x86_64-linux -Fu/home/johan/tmp/synalist-code-207-trunk/ -FU/home/johan/tmp/synalist-code-207-trunk/lib/x86_64-linux/ laz_synapse.pas"/>
+</CONFIG>
